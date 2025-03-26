@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_03_26_192641) do
+ActiveRecord::Schema[7.2].define(version: 2025_03_26_195205) do
   create_table "active_admin_comments", force: :cascade do |t|
     t.string "namespace"
     t.text "body"
@@ -36,4 +36,20 @@ ActiveRecord::Schema[7.2].define(version: 2025_03_26_192641) do
     t.index ["email"], name: "index_admin_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
   end
+
+  create_table "products", force: :cascade do |t|
+    t.string "name"
+    t.text "description"
+    t.string "sku"
+    t.decimal "price"
+    t.integer "category_id", null: false
+    t.decimal "weight"
+    t.string "dimensions"
+    t.integer "stock_quantity"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category_id"], name: "index_products_on_category_id"
+  end
+
+  add_foreign_key "products", "categories"
 end
