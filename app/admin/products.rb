@@ -1,8 +1,8 @@
 # app/admin/products.rb
 ActiveAdmin.register Product do
   # Permit all parameters
-  permit_params :name, :description, :sku, :price, :category_id, :weight, 
-                :dimensions, :stock_quantity, :image
+  permit_params :name, :description, :price, :stock_quantity, :category_id, :image,
+                :sku, :weight, :dimensions, :on_sale, :is_new, :sale_price
 
   # Index view
   index do
@@ -39,6 +39,14 @@ ActiveAdmin.register Product do
       f.input :dimensions
       f.input :stock_quantity
       f.input :image, as: :file
+      
+      f.inputs 'Filtering Options' do
+        f.input :is_new, label: 'Mark as New Product'
+        f.input :on_sale, label: 'On Sale'
+        f.input :sale_price, label: 'Sale Price (if on sale)'
+      end
+
+      
     end
     f.actions
   end

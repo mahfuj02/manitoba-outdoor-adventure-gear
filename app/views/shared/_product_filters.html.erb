@@ -1,0 +1,9 @@
+<!-- app/views/shared/_product_filters.html.erb -->
+<div class="product-filters mb-4">
+  <div class="btn-group" role="group">
+    <%= link_to "All Products", products_path, class: "btn #{params[:filter].blank? ? 'btn-primary' : 'btn-outline-primary'}" %>
+    <%= link_to "New Arrivals", products_path(filter: 'new'), class: "btn #{params[:filter] == 'new' ? 'btn-primary' : 'btn-outline-primary'}" %>
+    <%= link_to "On Sale", products_path(filter: 'on_sale'), class: "btn #{params[:filter] == 'on_sale' ? 'btn-primary' : 'btn-outline-primary'}" %>
+    <%= link_to "Recently Updated", products_path(filter: 'recently_updated'), class: "btn #{params[:filter] == 'recently_updated' ? 'btn-primary' : 'btn-outline-primary'}" %>
+  </div>
+</div>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_04_03_043445) do
+ActiveRecord::Schema[7.2].define(version: 2025_04_03_081213) do
   create_table "about_pages", force: :cascade do |t|
     t.text "content"
     t.datetime "created_at", null: false
@@ -95,6 +95,9 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_03_043445) do
     t.integer "stock_quantity"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "on_sale", default: false
+    t.boolean "is_new", default: true
+    t.decimal "sale_price", precision: 8, scale: 2
     t.index ["category_id"], name: "index_products_on_category_id"
   end
 

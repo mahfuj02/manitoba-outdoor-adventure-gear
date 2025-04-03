@@ -5,17 +5,28 @@
   <% if @category.present? %>
     <h1><%= @category.name %></h1>
     <p><%= @category.description %></p>
+  <% elsif @filter_name.present? %>
+    <h1><%= @filter_name %> Products</h1>
   <% else %>
-    <h1>Welcome to Manitoba Outdoor Adventure Gear</h1>
+    <h1>All Products</h1>
     <p>Discover the best outdoor equipment for your Manitoba adventures.</p>
   <% end %>
 
+  <%= render 'shared/product_filters' %>
+
   <div class="row mt-4">
-    <% @products.each do |product| %>
-      <div class="col-md-4 mb-4">
-        <%= render 'product', product: product %>
+    <% if @products.any? %>
+      <% @products.each do |product| %>
+        <div class="col-md-4 mb-4">
+          <%= render 'product', product: product %>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="col">
+        <div class="alert alert-info">
+          No products found for this selection.
+        </div>
       </div>
     <% end %>
   </div>
 </div>
-
