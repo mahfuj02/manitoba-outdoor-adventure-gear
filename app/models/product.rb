@@ -5,7 +5,8 @@ class Product < ApplicationRecord
   
   validates :name, presence: true
   validates :description, presence: true
-  validates :price, presence: true, numericality: { greater_than: 0 }
+  # Update this line to fix the validation error
+  validates :price, presence: true, numericality: { greater_than_or_equal_to: 0.01 }
   validates :stock_quantity, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   
   # Define which attributes can be searchable through Ransack
@@ -15,6 +16,6 @@ class Product < ApplicationRecord
   
   # Define which associations can be searchable through Ransack
   def self.ransackable_associations(auth_object = nil)
-    ["category", "image_attachment", "image_blob"] 
+    ["category", "image_attachment", "image_blob"]
   end
 end
