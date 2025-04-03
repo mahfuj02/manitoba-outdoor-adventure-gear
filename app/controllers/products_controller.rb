@@ -8,6 +8,13 @@ class ProductsController < ApplicationController
       @products = @products.where(category_id: params[:category_id])
       @category = Category.find(params[:category_id])
     end
+
+     # Handle search
+     if params[:search].present?
+      search_term = "%#{params[:search]}%"
+      @products = @products.where("name LIKE ? OR description LIKE ?", search_term, search_term)
+      @search_term = params[:search]
+    end
     
     # Handle other filters
     @products = @products.on_sale if params[:filter] == 'on_sale'

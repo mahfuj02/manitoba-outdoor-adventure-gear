@@ -1,0 +1,17 @@
+<!-- app/views/shared/_search_form.html.erb -->
+<div class="search-form mb-4">
+  <%= form_with url: products_path, method: :get, class: "row g-3", local: true do |form| %>
+    <div class="col-md-5">
+      <%= form.text_field :search, placeholder: "Search products...", class: "form-control", value: params[:search] %>
+    </div>
+    <div class="col-md-4">
+      <%= form.select :category_id, 
+                    options_for_select([["All Categories", ""]] + Category.all.map { |c| [c.name, c.id] }, params[:category_id]), 
+                    {}, 
+                    class: "form-select" %>
+    </div>
+    <div class="col-md-3">
+      <%= form.submit "Search", class: "btn btn-primary w-100" %>
+    </div>
+  <% end %>
+</div>
