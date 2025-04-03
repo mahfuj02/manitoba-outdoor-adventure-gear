@@ -1,6 +1,13 @@
 Rails.application.routes.draw do
+  get "contact/index"
+  get "about/index"
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
+  get 'about', to: 'about#index'
+  get 'contact', to: 'contact#index'
+
+  root 'about#index' # Temporary root, will change later
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
