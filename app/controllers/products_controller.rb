@@ -21,6 +21,9 @@ class ProductsController < ApplicationController
                    when 'recently_updated' then 'Recently Updated'
                    else nil
                    end
+    
+    # Apply pagination
+    @products = @products.page(params[:page]).per(9)
   end
   
   def show
