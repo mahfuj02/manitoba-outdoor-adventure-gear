@@ -1,0 +1,20 @@
+
+<!-- app/views/products/_product.html.erb (partial) -->
+<div class="card h-100">
+  <% if product.image.attached? %>
+    <%= image_tag product.image, class: "card-img-top", alt: product.name %>
+  <% else %>
+    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+      <span class="text-muted">No image available</span>
+    </div>
+  <% end %>
+  
+  <div class="card-body">
+    <h5 class="card-title"><%= product.name %></h5>
+    <p class="card-text"><%= truncate(product.description, length: 100) %></p>
+    <p class="card-text text-danger fw-bold"><%= number_to_currency(product.price) %></p>
+    <div class="d-flex justify-content-between">
+      <%= link_to "View Details", product_path(product), class: "btn btn-primary" %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,19 @@
+<!-- app/views/products/index.html.erb -->
+<div class="container mt-4">
+  <% if @category.present? %>
+    <h1><%= @category.name %></h1>
+    <p><%= @category.description %></p>
+  <% else %>
+    <h1>Welcome to Manitoba Outdoor Adventure Gear</h1>
+    <p>Discover the best outdoor equipment for your Manitoba adventures.</p>
+  <% end %>
+
+  <div class="row mt-4">
+    <% @products.each do |product| %>
+      <div class="col-md-4 mb-4">
+        <%= render 'product', product: product %>
+      </div>
+    <% end %>
+  </div>
+</div>
+

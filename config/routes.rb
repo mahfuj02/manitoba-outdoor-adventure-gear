@@ -1,12 +1,16 @@
 Rails.application.routes.draw do
+  get "products/index"
+  get "products/show"
   get "contact/index"
   get "about/index"
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
+
+  resources :products, only: [:index, :show]
   get 'about', to: 'about#index'
   get 'contact', to: 'contact#index'
 
-  root 'about#index' # Temporary root, will change later
+  root 'products#index'
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
