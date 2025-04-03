@@ -1,4 +1,6 @@
 <!-- app/views/products/index.html.erb -->
+<%= render 'shared/breadcrumb' %>
+
 <div class="container mt-4">
   <% if @category.present? %>
     <h1><%= @category.name %></h1>

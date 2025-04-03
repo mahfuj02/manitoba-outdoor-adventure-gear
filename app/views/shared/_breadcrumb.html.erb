@@ -1,0 +1,15 @@
+<!-- app/views/shared/_breadcrumb.html.erb -->
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="<%= root_path %>">Home</a></li>
+    <% if @category.present? %>
+      <li class="breadcrumb-item active"><%= @category.name %></li>
+    <% end %>
+    <% if @product.present? && controller_name == 'products' && action_name == 'show' %>
+      <% if @product.category.present? %>
+        <li class="breadcrumb-item"><a href="<%= products_path(category_id: @product.category.id) %>"><%= @product.category.name %></a></li>
+      <% end %>
+      <li class="breadcrumb-item active"><%= @product.name %></li>
+    <% end %>
+  </ol>
+</nav>
