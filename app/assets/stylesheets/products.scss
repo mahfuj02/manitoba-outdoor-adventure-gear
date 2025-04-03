@@ -1,0 +1,40 @@
+/* app/assets/stylesheets/products.scss */
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    
+    .card-img-top {
+      height: 200px;
+      object-fit: cover;
+    }
+  }
+  
+  .badge {
+    font-size: 0.9rem;
+    padding: 0.5rem;
+  }
+  
+  .breadcrumb {
+    background-color: #f8f9fa;
+    padding: 0.75rem 1rem;
+    border-radius: 0.25rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Product detail page */
+  .product-image {
+    max-height: 400px;
+    width: 100%;
+    object-fit: contain;
+  }
+  
+  /* Category styling */
+  .category-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #dee2e6;
+  }
