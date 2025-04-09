@@ -1,64 +1,108 @@
 # app/controllers/carts_controller.rb
 class CartsController < ApplicationController
-  before_action :initialize_cart
-  
   def show
-    @cart_items = @cart.cart_items.includes(:product)
+    load_cart_items
   end
   
   def add_item
-    product = Product.find(params[:product_id])
-    quantity = params[:quantity].to_i || 1
+    # The error is happening here - params[:id] is nil, but we're getting product_id
+    product_id = params[:product_id] || params[:id]
     
-    # Find or initialize a new cart item
-    cart_item = @cart.cart_items.find_by(product: product)
-    
-    if cart_item
-      # Update quantity if item exists
-      cart_item.update(quantity: cart_item.quantity + quantity)
-    else
-      # Create new cart item if it doesn't exist
-      cart_item = @cart.cart_items.create(product: product, quantity: quantity)
+    # Ensure we have a product ID
+    if product_id.blank?
+      flash[:alert] = "Product not found"
+      redirect_back(fallback_location: products_path)
+      return
     end
     
-    respond_to do |format|
-      format.html { redirect_back(fallback_location: products_path, notice: "#{product.name} added to cart.") }
-      format.json { render json: { status: 'success', message: "#{product.name} added to cart." } }
-    end
+    # Find the product
+    @product = Product.find(product_id)
+    quantity = params[:quantity].to_i
+    quantity = 1 if quantity < 1
+    
+    # Initialize cart in session if it doesn't exist
+    session[:cart] ||= {}
+    
+    # Convert ID to string for consistent hash key
+    product_id = product_id.to_s
+    
+    # Add to cart
+    session[:cart][product_id] ||= 0
+    session[:cart][product_id] += quantity
+    
+    # Force session save
+    session[:updated_at] = Time.now.to_i
+    
+    flash[:notice] = "#{@product.name} added to your cart."
+    redirect_to cart_path
   end
   
   def update_item
-    cart_item = @cart.cart_items.find(params[:id])
+    product_id = params[:id].to_s
     quantity = params[:quantity].to_i
     
+    # Get the cart from session
+    session[:cart] ||= {}
+    
     if quantity <= 0
-      cart_item.destroy
-      notice = "Item removed from cart."
+      # Remove item if quantity is zero or negative
+      session[:cart].delete(product_id)
+      flash[:notice] = "Item removed from cart."
     else
-      cart_item.update(quantity: quantity)
-      notice = "Cart updated successfully."
+      # Update quantity
+      session[:cart][product_id] = quantity
+      flash[:notice] = "Cart updated successfully."
     end
     
-    redirect_to cart_path, notice: notice
+    # Force session save
+    session[:updated_at] = Time.now.to_i
+    
+    redirect_to cart_path
   end
   
   def remove_item
-    cart_item = @cart.cart_items.find(params[:id])
-    cart_item.destroy
+    product_id = params[:id].to_s
     
-    redirect_to cart_path, notice: "Item removed from cart."
+    # Get the cart from session
+    session[:cart] ||= {}
+    
+    # Remove item
+    session[:cart].delete(product_id)
+    
+    # Force session save
+    session[:updated_at] = Time.now.to_i
+    
+    flash[:notice] = "Item removed from cart."
+    redirect_to cart_path
   end
   
   private
   
-  def initialize_cart
-    if user_signed_in?
-      # Find or create cart for logged in user
-      @cart = current_user.cart || current_user.create_cart
+  def load_cart_items
+    @cart_items = []
+    @total = 0
+    
+    if session[:cart].present?
+      Rails.logger.debug "Cart from session: #{session[:cart].inspect}"
+      
+      session[:cart].each do |product_id, quantity|
+        product = Product.find_by(id: product_id)
+        next unless product
+        
+        item_price = product.on_sale && product.sale_price.present? ? product.sale_price : product.price
+        item_total = item_price * quantity
+        
+        @cart_items << {
+          product: product,
+          quantity: quantity,
+          price: item_price,
+          total: item_total
+        }
+        
+        @total += item_total
+      end
     else
-      # Find or create cart based on session
-      session[:cart_id] ||= SecureRandom.hex(16)
-      @cart = Cart.find_or_create_by(session_id: session[:cart_id])
+      Rails.logger.debug "Cart is empty or not present in session"
     end
   end
 end

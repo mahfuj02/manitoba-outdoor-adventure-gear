@@ -43,14 +43,15 @@
             <li class="nav-item">
               <a class="nav-link" href="<%= contact_path %>">Contact</a>
             </li>
-            <!-- app/views/layouts/application.html.erb (add to navbar) -->
-<li class="nav-item">
-  <%= link_to cart_path, class: "nav-link" do %>
+            <!-- In your application layout navbar -->
+<li class="nav-item dropdown">
+  <a class="nav-link dropdown-toggle" href="#" id="cartDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     <i class="bi bi-cart"></i> Cart
-    <% if @cart && @cart.cart_items.any? %>
-      <span class="badge bg-danger"><%= @cart.cart_items.sum(:quantity) %></span>
+    <% if @cart_count && @cart_count > 0 %>
+      <span class="badge bg-danger"><%= @cart_count %></span>
     <% end %>
-  <% end %>
+  </a>
+  <%= render 'layouts/mini_cart' %>
 </li>
           </ul>
           <!-- Simple search form for the navbar -->
@@ -63,6 +64,15 @@
         
       </div>
     </nav>
+    <!-- app/views/layouts/application.html.erb (add after navbar) -->
+<div id="flash-messages" class="container mt-3">
+  <% flash.each do |type, message| %>
+    <div class="alert alert-<%= type == 'notice' ? 'success' : 'danger' %> alert-dismissible fade show">
+      <%= message %>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  <% end %>
+</div>
     
     <!-- Main content -->
     <div class="container mt-4">

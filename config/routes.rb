@@ -15,12 +15,13 @@ Rails.application.routes.draw do
   get 'contact', to: 'contact#index'
 
 
-   # Cart routes
-   resource :cart, only: [:show]
-   post 'cart/add/:product_id', to: 'carts#add_item', as: 'add_to_cart'
-   patch 'cart/update/:id', to: 'carts#update_item', as: 'update_cart_item'
-   delete 'cart/remove/:id', to: 'carts#remove_item', as: 'remove_cart_item'
-
+# config/routes.rb (cart routes)
+  get 'cart', to: 'carts#show', as: 'cart'
+  post 'cart/add/:product_id', to: 'carts#add_item', as: 'add_to_cart'
+# or if you're using 'id' in the URL:
+# post 'cart/add/:id', to: 'carts#add_item', as: 'add_to_cart'
+  patch 'cart/update/:id', to: 'carts#update_item', as: 'update_cart_item'
+  delete 'cart/remove/:id', to: 'carts#remove_item', as: 'remove_cart_item'
   root 'products#index'
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

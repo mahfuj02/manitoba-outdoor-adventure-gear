@@ -1,0 +1,21 @@
+// app/views/carts/add_item.js.erb
+// Update the cart count
+document.querySelectorAll('.cart-count').forEach(function(element) {
+  element.textContent = '<%= session[:cart].values.sum %>';
+  element.classList.add('badge', 'bg-danger');
+});
+
+// Flash message
+const flashContainer = document.getElementById('flash-messages');
+if (flashContainer) {
+  const alertDiv = document.createElement('div');
+  alertDiv.className = 'alert alert-success alert-dismissible fade show';
+  alertDiv.innerHTML = '<%= j flash[:notice] %><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
+  
+  flashContainer.appendChild(alertDiv);
+  
+  // Auto-dismiss after 3 seconds
+  setTimeout(function() {
+    alertDiv.remove();
+  }, 3000);
+}

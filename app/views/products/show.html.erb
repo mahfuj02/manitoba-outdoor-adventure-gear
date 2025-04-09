@@ -29,15 +29,27 @@
           <span class="badge bg-danger">Out of Stock</span>
         <% end %>
       </div>
-      <!-- app/views/products/show.html.erb (update button section) -->
+      <!-- app/views/products/show.html.erb (update the button section) -->
 <div class="mb-4">
-  <%= form_with url: add_to_cart_path(@product), method: :post, class: "d-flex align-items-center" do %>
-    <div class="input-group me-3" style="width: 130px;">
-      <%= number_field_tag :quantity, 1, min: 1, max: @product.stock_quantity, class: "form-control" %>
+<%= form_with url: add_to_cart_path(@product), method: :post, data: { turbo: false }, local: true do %>
+  <%= hidden_field_tag :product_id, @product.id %>
+  <div class="input-group me-3" style="width: 130px;">
+    <%= number_field_tag :quantity, 1, min: 1, max: @product.stock_quantity, class: "form-control" %>
+  </div>
+  <%= submit_tag "Add to Cart", class: "btn btn-primary btn-lg", disabled: (@product.stock_quantity <= 0) %>
+<% end %>
+
+<!-- app/views/products/show.html.erb (add this section) -->
+<% if @product.tags.any? %>
+  <div class="mb-3">
+    <h5>Tags:</h5>
+    <div>
+      <% @product.tags.each do |tag| %>
+        <span class="badge bg-secondary me-1"><%= tag.name %></span>
+      <% end %>
     </div>
-    <%= submit_tag "Add to Cart", class: "btn btn-primary btn-lg", disabled: (@product.stock_quantity <= 0) %>
-  <% end %>
-</div>
+  </div>
+<% end %>
       
       <hr>
       

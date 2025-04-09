@@ -9,6 +9,12 @@ class ProductsController < ApplicationController
       @category = Category.find(params[:category_id])
     end
 
+     # Filter by tag
+  if params[:tag_id].present?
+    @tag = Tag.find(params[:tag_id])
+    @products = @products.joins(:tags).where(tags: { id: @tag.id })
+  end
+
      # Handle search
      if params[:search].present?
       search_term = "%#{params[:search]}%"

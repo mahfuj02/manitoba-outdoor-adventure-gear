@@ -1,0 +1,39 @@
+<!-- app/views/layouts/_mini_cart.html.erb -->
+<div class="dropdown-menu dropdown-menu-end p-3" style="width: 300px;">
+  <h6 class="dropdown-header">Your Cart</h6>
+  
+  <% if @mini_cart_items.empty? %>
+    <p class="text-muted">Your cart is empty.</p>
+  <% else %>
+    <div class="mini-cart-items">
+      <% @mini_cart_items.each do |item| %>
+        <div class="mini-cart-item d-flex align-items-center mb-2">
+          <% if item[:product].image.attached? %>
+            <%= image_tag item[:product].image.variant(resize_to_limit: [40, 40]), class: "me-2" %>
+          <% else %>
+            <div class="bg-secondary text-white d-flex align-items-center justify-content-center me-2" style="width: 40px; height: 40px;">
+              <small>No img</small>
+            </div>
+          <% end %>
+          <div class="flex-grow-1">
+            <div><%= item[:product].name %></div>
+            <div class="text-muted"><%= item[:quantity] %> × <%= number_to_currency(item[:price]) %></div>
+          </div>
+          <div class="ms-2">
+            <%= button_to "×", remove_cart_item_path(item[:product].id), method: :delete, class: "btn btn-sm btn-outline-danger", style: "font-size: 0.8rem; padding: 0.1rem 0.4rem;" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+    
+    <div class="d-flex justify-content-between border-top pt-2 mt-2">
+      <strong>Total:</strong>
+      <strong><%= number_to_currency(@mini_cart_total) %></strong>
+    </div>
+    
+    <div class="d-grid gap-2 mt-3">
+      <%= link_to "View Cart", cart_path, class: "btn btn-primary btn-sm" %>
+      <%= link_to "Checkout", "#", class: "btn btn-success btn-sm" %>
+    </div>
+  <% end %>
+</div>
