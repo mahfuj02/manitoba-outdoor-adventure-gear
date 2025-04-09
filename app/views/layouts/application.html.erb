@@ -43,12 +43,22 @@
             <li class="nav-item">
               <a class="nav-link" href="<%= contact_path %>">Contact</a>
             </li>
+            <!-- app/views/layouts/application.html.erb (add to navbar) -->
+<li class="nav-item">
+  <%= link_to cart_path, class: "nav-link" do %>
+    <i class="bi bi-cart"></i> Cart
+    <% if @cart && @cart.cart_items.any? %>
+      <span class="badge bg-danger"><%= @cart.cart_items.sum(:quantity) %></span>
+    <% end %>
+  <% end %>
+</li>
           </ul>
           <!-- Simple search form for the navbar -->
       <form class="d-flex" action="<%= products_path %>" method="get">
         <input class="form-control me-2" type="search" name="search" placeholder="Quick search..." aria-label="Search">
         <button class="btn btn-outline-light" type="submit">Search</button>
       </form>
+
         </div>
         
       </div>
