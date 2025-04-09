@@ -1,11 +1,11 @@
 name,description,price,stock_quantity,sku,category,weight,dimensions
-Wilderness Backpack,High-capacity backpack with internal frame for extended trips,129.99,18,BP-001,Hiking Gear,2.3,65x35x20 cm
-All-Weather Tent,Durable 3-season tent for family camping,259.99,12,TN-002,Camping Gear,4.1,210x180x130 cm
-Ultralight Sleeping Bag,Compact sleeping bag rated for -5°C,89.99,24,SB-003,Camping Gear,1.2,200x80 cm
-Advanced Hiking Poles,Adjustable aluminum hiking poles with ergonomic grips,49.99,35,HP-004,Hiking Gear,0.45,68-135 cm
-Waterproof Map Case,Transparent case for protecting maps in all weather,19.99,50,MC-005,Hiking Gear,0.15,30x20 cm
-LED Headlamp,Powerful headlamp with adjustable brightness,34.99,42,HL-006,Camping Gear,0.18,6x4x3 cm
-Insulated Water Bottle,Double-wall vacuum insulated bottle for hot/cold liquids,24.99,60,WB-007,Hiking Gear,0.35,25x8 cm
-Folding Camp Chair,Lightweight portable chair with cup holder,39.99,28,CC-008,Camping Gear,2.8,90x56x56 cm
-Multi-tool Knife,Stainless steel multi-tool with 12 functions,29.99,45,MT-009,Camping Gear,0.22,10x3x2 cm
-GPS Navigator,Rugged handheld GPS device with topographic maps,199.99,15,GP-010,Hiking Gear,0.28,12x6x3 cm
+Explorer Backpack 45L,Durable backpack with 45L capacity for multi-day hikes,129.99,25,BP-001,Hiking Gear,1.8,60x35x25 cm
+Mountain Vista Tent 2P,Lightweight 2-person tent with easy setup,249.99,18,TN-001,Camping Gear,2.6,220x140x110 cm
+Trailblazer Hiking Boots,Waterproof hiking boots with ankle support,159.99,32,FW-001,Hiking Gear,1.2,30x15x15 cm
+Arctic Sleeping Bag -10C,Winter sleeping bag rated for -10°C conditions,119.99,20,SB-001,Camping Gear,1.6,210x80 cm
+Lakeside Fishing Rod,Telescoping fishing rod with ergonomic grip,89.99,40,FR-001,Fishing Gear,0.7,30-210 cm
+Manitoba Lake Kayak,Stable single-person kayak for lake exploration,599.99,8,KY-001,Water Sports,22.0,330x80x35 cm
+Winter Trek Snowshoes,Aluminum snowshoes for deep snow conditions,179.99,15,SW-001,Winter Adventure,2.0,75x25 cm
+Tactical LED Headlamp,Powerful headlamp with adjustable brightness levels,34.99,50,HL-001,Camping Gear,0.12,7x5x4 cm
+Wilderness First Aid Kit,Comprehensive first aid kit for outdoor emergencies,45.99,35,FA-001,Safety Equipment,0.6,20x15x8 cm
+Trail Finder GPS,Rugged GPS device with topographic maps,229.99,12,GP-001,Navigation Equipment,0.25,12x6x3 cm
