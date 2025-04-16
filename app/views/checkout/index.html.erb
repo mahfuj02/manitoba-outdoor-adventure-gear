@@ -10,56 +10,100 @@
   
   <div class="row">
     <div class="col-md-8">
+      <% if @addresses.present? %>
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5>Select an Existing Address</h5>
+          </div>
+          <div class="card-body">
+            <%= form_with(url: checkout_address_path, method: :post, local: true, id: "select-address-form") do |f| %>
+              <%= hidden_field_tag 'use_existing_address', '1' %>
+              
+              <div class="mb-3">
+                <% @addresses.each do |address| %>
+                  <div class="form-check mb-2 p-2 border rounded <%= 'border-primary' if address.is_default? %>">
+                    <%= radio_button_tag 'selected_address_id', address.id, 
+                                        address.id.to_s == @selected_address_id.to_s, 
+                                        class: 'form-check-input me-2' %>
+                    <label class="form-check-label" for="selected_address_id_<%= address.id %>">
+                      <strong><%= current_user.full_name %></strong><br>
+                      <%= address.street %><br>
+                      <%= address.city %>, <%= address.province.name %> <%= address.postal_code %><br>
+                      <%= address.country %>
+                      <% if address.is_default? %>
+                        <span class="badge bg-primary ms-2">Default</span>
+                      <% end %>
+                    </label>
+                  </div>
+                <% end %>
+              </div>
+              
+              <div class="d-grid">
+                <%= f.submit "Continue with Selected Address", class: "btn btn-primary" %>
+              </div>
+            <% end %>
+            
+            <div class="text-center mt-3">
+              <p>- OR -</p>
+              <button class="btn btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#newAddressForm">
+                Add a New Address
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="collapse <%= 'show' if flash[:alert] %>" id="newAddressForm">
+      <% end %>
+      
       <div class="card">
         <div class="card-header">
-          <h5>Shipping Address</h5>
+          <h5><%= @addresses.present? ? 'Add a New Address' : 'Shipping Address' %></h5>
         </div>
         <div class="card-body">
-        <!-- Update just the form part in app/views/checkout/index.html.erb -->
-        <%= form_with(url: checkout_address_path, method: :post, local: true) do |f| %>
-          <% if @shipping_address.persisted? %>
-            <%= hidden_field_tag 'address[id]', @shipping_address.id %>
-          <% end %>
-          
-          <div class="mb-3">
-            <%= label_tag 'address[street]', "Street Address", class: "form-label" %>
-            <%= text_field_tag 'address[street]', @shipping_address.street, class: "form-control", required: true %>
-          </div>
-          
-          <div class="mb-3">
-            <%= label_tag 'address[city]', "City", class: "form-label" %>
-            <%= text_field_tag 'address[city]', @shipping_address.city, class: "form-control", required: true %>
-          </div>
-          
-          <div class="mb-3">
-            <%= label_tag 'address[province_id]', "Province", class: "form-label" %>
-            <%= select_tag 'address[province_id]', 
-                           options_from_collection_for_select(@provinces, 'id', 'display_name', @shipping_address.province_id),
+          <%= form_with(url: checkout_address_path, method: :post, local: true) do |f| %>
+            <div class="mb-3">
+              <%= label_tag 'address[street]', "Street Address", class: "form-label" %>
+              <%= text_field_tag 'address[street]', (@new_address || @shipping_address)&.street, class: "form-control", required: true %>
+            </div>
+            
+            <div class="mb-3">
+              <%= label_tag 'address[city]', "City", class: "form-label" %>
+              <%= text_field_tag 'address[city]', (@new_address || @shipping_address)&.city, class: "form-control", required: true %>
+            </div>
+            
+            <div class="mb-3">
+              <%= label_tag 'address[province_id]', "Province", class: "form-label" %>
+              <%= select_tag 'address[province_id]', 
+                           options_from_collection_for_select(@provinces, 'id', 'display_name', (@new_address || @shipping_address)&.province_id),
                            { include_blank: "Select a province", class: "form-select", required: true } %>
-          </div>
-          
-          <div class="mb-3">
-            <%= label_tag 'address[postal_code]', "Postal Code", class: "form-label" %>
-            <%= text_field_tag 'address[postal_code]', @shipping_address.postal_code, class: "form-control", required: true %>
-          </div>
-          
-          <div class="mb-3">
-            <%= label_tag 'address[country]', "Country", class: "form-label" %>
-            <%= text_field_tag 'address[country]', @shipping_address.country || "Canada", class: "form-control", required: true %>
-          </div>
-          
-          <div class="form-check mb-3">
-            <%= check_box_tag 'address[is_default]', "1", @shipping_address.is_default?, class: "form-check-input" %>
-            <%= label_tag 'address[is_default]', "Set as default address", class: "form-check-label" %>
-          </div>
-          
-          <div class="d-flex justify-content-between">
-            <%= link_to "Back to Cart", cart_path, class: "btn btn-secondary" %>
-            <%= submit_tag "Continue to Review", class: "btn btn-primary" %>
-          </div>
-        <% end %>
+            </div>
+            
+            <div class="mb-3">
+              <%= label_tag 'address[postal_code]', "Postal Code", class: "form-label" %>
+              <%= text_field_tag 'address[postal_code]', (@new_address || @shipping_address)&.postal_code, class: "form-control", required: true %>
+            </div>
+            
+            <div class="mb-3">
+              <%= label_tag 'address[country]', "Country", class: "form-label" %>
+              <%= text_field_tag 'address[country]', (@new_address || @shipping_address)&.country || "Canada", class: "form-control", required: true %>
+            </div>
+            
+            <div class="form-check mb-3">
+              <%= check_box_tag 'is_default', "1", false, class: "form-check-input" %>
+              <%= label_tag 'is_default', "Set as default address", class: "form-check-label" %>
+            </div>
+            
+            <div class="d-flex justify-content-between">
+              <%= link_to "Back to Cart", cart_path, class: "btn btn-secondary" %>
+              <%= f.submit "Continue to Review", class: "btn btn-primary" %>
+            </div>
+          <% end %>
         </div>
       </div>
+      
+      <% if @addresses.present? %>
+        </div>
+      <% end %>
     </div>
     
     <div class="col-md-4">
@@ -91,3 +135,19 @@
     </div>
   </div>
 </div>
+
+<% content_for :page_scripts do %>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Auto-submit the form when selecting an address (optional feature)
+      /*
+      const addressRadios = document.querySelectorAll('input[name="selected_address_id"]');
+      addressRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+          document.getElementById('select-address-form').submit();
+        });
+      });
+      */
+    });
+  </script>
+<% end %>

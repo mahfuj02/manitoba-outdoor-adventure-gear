@@ -4,10 +4,25 @@ class CheckoutController < ApplicationController
   before_action :ensure_cart_is_not_empty
   
   def index
-    # Initialize or fetch addresses
-    @shipping_address = current_user.addresses.find_by(is_default: true) || 
+    # Load all user addresses
+    @addresses = current_user.addresses
+    
+    # If user has no addresses, initialize a new one
+    if @addresses.empty?
+      @new_address = current_user.addresses.build
+    else
+      # Set selected address to default or first one
+      @selected_address_id = params[:address_id] || 
+                             current_user.addresses.find_by(is_default: true)&.id || 
+                             current_user.addresses.first.id
+    end
+    
+    # For backward compatibility 
+    @shipping_address = current_user.addresses.find_by(id: @selected_address_id) || 
+                        current_user.addresses.find_by(is_default: true) || 
                         current_user.addresses.first || 
                         current_user.addresses.build
+    
     @provinces = Province.order(:name)
     
     # Load cart items for the order summary
@@ -15,32 +30,48 @@ class CheckoutController < ApplicationController
   end
   
   def create_address
-    @address = if params[:address_id].present?
-                 current_user.addresses.find(params[:address_id])
-               else
-                 current_user.addresses.build
-               end
-    
-    @address.attributes = address_params
-    
-    if @address.save
-      # Set as default if requested or if it's the only address
-      if params[:is_default] || current_user.addresses.count == 1
-        current_user.addresses.update_all(is_default: false)
-        @address.update(is_default: true)
-      end
+    if params[:use_existing_address] == "1" && params[:selected_address_id].present?
+      # Use existing address
+      @address = current_user.addresses.find(params[:selected_address_id])
       
-      redirect_to checkout_review_path
+      # Redirect to review with the selected address
+      redirect_to checkout_review_path(address_id: @address.id)
     else
-      @provinces = Province.order(:name)
-      load_cart_items
-      flash.now[:alert] = "There was a problem with your address: #{@address.errors.full_messages.join(', ')}"
-      render :index
+      # Create new address flow
+      @address = if params[:address_id].present?
+                   current_user.addresses.find(params[:address_id])
+                 else
+                   current_user.addresses.build
+                 end
+      
+      @address.attributes = address_params
+      
+      if @address.save
+        # Set as default if requested or if it's the only address
+        if params[:is_default] == "1" || current_user.addresses.count == 1
+          current_user.addresses.update_all(is_default: false)
+          @address.update(is_default: true)
+        end
+        
+        redirect_to checkout_review_path(address_id: @address.id)
+      else
+        @addresses = current_user.addresses
+        @provinces = Province.order(:name)
+        @new_address = @address # For form rendering
+        load_cart_items
+        flash.now[:alert] = "There was a problem with your address: #{@address.errors.full_messages.join(', ')}"
+        render :index
+      end
     end
   end
   
   def review
-    @shipping_address = current_user.addresses.find_by(is_default: true) || current_user.addresses.first
+    address_id = params[:address_id]
+    @shipping_address = if address_id
+                        current_user.addresses.find_by(id: address_id)
+                      else
+                        current_user.addresses.find_by(is_default: true) || current_user.addresses.first
+                      end
     
     if @shipping_address.nil?
       redirect_to checkout_path, alert: "Please add a shipping address before proceeding to checkout."
@@ -56,7 +87,12 @@ class CheckoutController < ApplicationController
   end
   
   def complete
-    @shipping_address = current_user.addresses.find_by(is_default: true) || current_user.addresses.first
+    address_id = params[:address_id]
+    @shipping_address = if address_id
+                        current_user.addresses.find_by(id: address_id)
+                      else
+                        current_user.addresses.find_by(is_default: true) || current_user.addresses.first
+                      end
     
     if @shipping_address.nil?
       redirect_to checkout_path, alert: "Please add a shipping address before placing an order."
