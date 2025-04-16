@@ -12,6 +12,8 @@
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
   </head>
 
   <body>
@@ -43,56 +45,71 @@
             <li class="nav-item">
               <a class="nav-link" href="<%= contact_path %>">Contact</a>
             </li>
-            <li class="nav-item">
-  <% if user_signed_in? %>
-    <%= link_to "My Orders", orders_path, class: "nav-link" %>
-  <% end %>
-</li>
-            <!-- In your application layout navbar -->
-<li class="nav-item dropdown">
-  <a class="nav-link dropdown-toggle" href="#" id="cartDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    <i class="bi bi-cart"></i> Cart
-    <% if @cart_count && @cart_count > 0 %>
-      <span class="badge bg-danger"><%= @cart_count %></span>
-    <% end %>
-  </a>
-  <%= render 'layouts/mini_cart' %>
-</li>
+            <% if user_signed_in? %>
+              <li class="nav-item">
+                <%= link_to "My Orders", orders_path, class: "nav-link" %>
+              </li>
+            <% end %>
+            <!-- Cart dropdown -->
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="cartDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-cart"></i> Cart
+                <% if @cart_count && @cart_count > 0 %>
+                  <span class="badge bg-danger"><%= @cart_count %></span>
+                <% end %>
+              </a>
+              <%= render 'layouts/mini_cart' %>
+            </li>
           </ul>
-          <!-- Simple search form for the navbar -->
-      <form class="d-flex" action="<%= products_path %>" method="get">
-        <input class="form-control me-2" type="search" name="search" placeholder="Quick search..." aria-label="Search">
-        <button class="btn btn-outline-light" type="submit">Search</button>
-      </form>
-
+          
+          <!-- Search form -->
+          <form class="d-flex me-2" action="<%= products_path %>" method="get">
+            <input class="form-control me-2" type="search" name="search" placeholder="Quick search..." aria-label="Search">
+            <button class="btn btn-outline-light" type="submit">Search</button>
+          </form>
+          
+          <!-- User navigation -->
+          <ul class="navbar-nav">
+            <% if user_signed_in? %>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <%= current_user.full_name %>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                  <li><%= link_to "My Profile", edit_user_registration_path, class: "dropdown-item" %></li>
+                  <li><%= link_to "My Addresses", addresses_path, class: "dropdown-item" %></li>
+                  <li><%= link_to "My Orders", orders_path, class: "dropdown-item" %></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li>
+                    <%= button_to "Sign Out", destroy_user_session_path, method: :delete, class: "dropdown-item", form: { data: { turbo: false } } %>
+                  </li>
+                </ul>
+              </li>
+            <% else %>
+              <li class="nav-item">
+                <%= link_to "Sign In", new_user_session_path, class: "nav-link" %>
+              </li>
+              <li class="nav-item">
+                <%= link_to "Register", new_user_registration_path, class: "nav-link" %>
+              </li>
+            <% end %>
+          </ul>
         </div>
-        <!-- app/views/layouts/application.html.erb -->
-<div class="user-nav">
-  <% if user_signed_in? %>
-    <span style="color: white; font-weight: bold; padding: 5px; ">Welcome , <%= current_user.first_name %>!</span>
-    <%= link_to 'Edit Profile', edit_user_registration_path %>
-    <%= link_to 'Logout', destroy_user_session_path, data: { turbo_method: :delete } %>
-  <% else %>
-    <%= link_to 'Sign Up', new_user_registration_path %>
-    <%= link_to 'Login', new_user_session_path %>
-  <% end %>
-</div>
-        
       </div>
     </nav>
-    <!-- app/views/layouts/application.html.erb (add after navbar) -->
-<div id="flash-messages" class="container mt-3">
-  <% flash.each do |type, message| %>
-    <div class="alert alert-<%= type == 'notice' ? 'success' : 'danger' %> alert-dismissible fade show">
-      <%= message %>
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    
+    <!-- Flash messages -->
+    <div id="flash-messages" class="container mt-3">
+      <% flash.each do |type, message| %>
+        <div class="alert alert-<%= type == 'notice' ? 'success' : 'danger' %> alert-dismissible fade show">
+          <%= message %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <% end %>
     </div>
-  <% end %>
-</div>
     
     <!-- Main content -->
     <div class="container mt-4">
-    <%= render 'shared/flash_messages' %>
       <%= yield %>
     </div>
     

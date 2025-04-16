@@ -1,0 +1,55 @@
+<!-- app/views/addresses/index.html.erb -->
+<div class="container py-4">
+  <h1>Your Addresses</h1>
+  
+  <div class="row mt-4">
+    <div class="col-md-8">
+      <% if @addresses.any? %>
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5 class="mb-0">Your Saved Addresses</h5>
+          </div>
+          <div class="card-body">
+            <% @addresses.each do |address| %>
+              <div class="address-card mb-3 p-3 border <%= 'border-primary' if address.is_default? %>">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <% if address.is_default? %>
+                      <span class="badge bg-primary mb-2">Default Address</span>
+                    <% end %>
+                    <p class="mb-1"><strong><%= current_user.full_name %></strong></p>
+                    <p class="mb-1"><%= address.street %></p>
+                    <p class="mb-1"><%= address.city %>, <%= address.province.name %> <%= address.postal_code %></p>
+                    <p class="mb-1"><%= address.country %></p>
+                  </div>
+                  <div class="btn-group">
+                    <%= link_to 'Edit', edit_address_path(address), class: 'btn btn-sm btn-outline-secondary' %>
+                    <%= link_to 'Delete', address_path(address), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-sm btn-outline-danger' %>
+                    <% unless address.is_default? %>
+                      <%= link_to 'Set as Default', set_default_address_path(address), method: :patch, class: 'btn btn-sm btn-outline-primary' %>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% else %>
+        <div class="alert alert-info">
+          You don't have any saved addresses. Add one now!
+        </div>
+      <% end %>
+    </div>
+    
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">Add New Address</h5>
+        </div>
+        <div class="card-body">
+          <%= render 'form', address: @address %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

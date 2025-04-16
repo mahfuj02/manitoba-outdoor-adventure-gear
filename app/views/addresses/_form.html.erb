@@ -1,0 +1,47 @@
+<!-- app/views/addresses/_form.html.erb -->
+<%= form_with(model: address, local: true) do |form| %>
+  <% if address.errors.any? %>
+    <div class="alert alert-danger">
+      <h4><%= pluralize(address.errors.count, "error") %> prohibited this address from being saved:</h4>
+      <ul>
+        <% address.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.label :street, class: "form-label" %>
+    <%= form.text_field :street, class: "form-control" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :city, class: "form-label" %>
+    <%= form.text_field :city, class: "form-control" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :province_id, "Province", class: "form-label" %>
+    <%= form.collection_select :province_id, @provinces, :id, :display_name, {}, class: "form-select" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :postal_code, class: "form-label" %>
+    <%= form.text_field :postal_code, class: "form-control" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :country, class: "form-label" %>
+    <%= form.text_field :country, value: address.country.presence || "Canada", class: "form-control" %>
+  </div>
+
+  <div class="mb-3 form-check">
+    <%= form.check_box :is_default, class: "form-check-input" %>
+    <%= form.label :is_default, "Set as default address", class: "form-check-label" %>
+  </div>
+
+  <div class="d-grid">
+    <%= form.submit class: "btn btn-primary" %>
+  </div>
+<% end %>
