@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_04_09_170614) do
+ActiveRecord::Schema[7.2].define(version: 2025_04_16_052451) do
   create_table "about_pages", force: :cascade do |t|
     t.text "content"
     t.datetime "created_at", null: false
@@ -59,6 +59,20 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_09_170614) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "addresses", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "street", null: false
+    t.string "city", null: false
+    t.integer "province_id", null: false
+    t.string "postal_code", null: false
+    t.string "country", null: false
+    t.boolean "is_default", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["province_id"], name: "index_addresses_on_province_id"
+    t.index ["user_id"], name: "index_addresses_on_user_id"
+  end
+
   create_table "admin_users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -102,6 +116,36 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_09_170614) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "order_items", force: :cascade do |t|
+    t.integer "order_id", null: false
+    t.integer "product_id", null: false
+    t.integer "quantity", null: false
+    t.decimal "price_at_time_of_purchase", precision: 8, scale: 2, null: false
+    t.decimal "subtotal", precision: 8, scale: 2
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["order_id"], name: "index_order_items_on_order_id"
+    t.index ["product_id"], name: "index_order_items_on_product_id"
+  end
+
+  create_table "orders", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "order_number", null: false
+    t.datetime "order_date"
+    t.integer "shipping_address_id"
+    t.integer "billing_address_id"
+    t.integer "status", default: 0
+    t.decimal "shipping_cost", precision: 8, scale: 2, default: "0.0"
+    t.decimal "tax_amount", precision: 8, scale: 2, default: "0.0"
+    t.decimal "total_amount", precision: 8, scale: 2, default: "0.0"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["billing_address_id"], name: "index_orders_on_billing_address_id"
+    t.index ["order_number"], name: "index_orders_on_order_number", unique: true
+    t.index ["shipping_address_id"], name: "index_orders_on_shipping_address_id"
+    t.index ["user_id"], name: "index_orders_on_user_id"
+  end
+
   create_table "product_tags", force: :cascade do |t|
     t.integer "product_id", null: false
     t.integer "tag_id", null: false
@@ -128,6 +172,17 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_09_170614) do
     t.index ["category_id"], name: "index_products_on_category_id"
   end
 
+  create_table "provinces", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "code", null: false
+    t.decimal "gst", precision: 5, scale: 2, default: "0.0"
+    t.decimal "pst", precision: 5, scale: 2, default: "0.0"
+    t.decimal "hst", precision: 5, scale: 2, default: "0.0"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "index_provinces_on_code", unique: true
+  end
+
   create_table "tags", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -151,9 +206,16 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_09_170614) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "addresses", "provinces"
+  add_foreign_key "addresses", "users"
   add_foreign_key "cart_items", "carts"
   add_foreign_key "cart_items", "products"
   add_foreign_key "carts", "users"
+  add_foreign_key "order_items", "orders"
+  add_foreign_key "order_items", "products"
+  add_foreign_key "orders", "addresses", column: "billing_address_id"
+  add_foreign_key "orders", "addresses", column: "shipping_address_id"
+  add_foreign_key "orders", "users"
   add_foreign_key "product_tags", "products"
   add_foreign_key "product_tags", "tags"
   add_foreign_key "products", "categories"
