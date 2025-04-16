@@ -1,76 +1,41 @@
-# app/controllers/addresses_controller.rb
-class AddressesController < ApplicationController
-    before_action :authenticate_user!
-    before_action :set_address, only: [:edit, :update, :destroy, :set_default]
+# app/controllers/checkout_controller.rb - modified create_address method
+def create_address
+    # Check for either address_id or address with id
+    if params[:address_id].present?
+      @address = current_user.addresses.find(params[:address_id])
+    elsif params[:address] && params[:address][:id].present? && !params[:address][:id].empty?
+      @address = current_user.addresses.find(params[:address][:id])
+    else
+      @address = current_user.addresses.build
+    end
     
-    def index
-      @addresses = current_user.addresses
-      @address = Address.new
+    # Use the address params from the right parameter key
+    if params[:address]
+      @address.attributes = address_params
+    end
+    
+    # Add more debug logging
+    Rails.logger.debug "Address data: #{@address.attributes.inspect}"
+    Rails.logger.debug "Form params: #{params.inspect}"
+    
+    if @address.save
+      # Set as default if requested (checking both possible parameter formats)
+      if params[:is_default] == "1" || params[:address][:is_default] == "1" || current_user.addresses.count == 1
+        current_user.addresses.where.not(id: @address.id).update_all(is_default: false)
+        @address.update(is_default: true)
+      end
+      
+      redirect_to checkout_review_path
+    else
       @provinces = Province.order(:name)
+      @shipping_address = @address # Make sure we use the right variable name
+      load_cart_items
+      flash.now[:alert] = "There was a problem with your address: #{@address.errors.full_messages.join(', ')}"
+      render :index
     end
-    
-    def create
-      @address = current_user.addresses.build(address_params)
-      
-      if @address.save
-        # Set as default if requested or if it's the only address
-        if params[:address][:is_default] == "1" || current_user.addresses.count == 1
-          current_user.addresses.update_all(is_default: false)
-          @address.update(is_default: true)
-        end
-        
-        redirect_to addresses_path, notice: 'Address was successfully created.'
-      else
-        @addresses = current_user.addresses
-        @provinces = Province.order(:name)
-        render :index
-      end
-    end
-    
-    def edit
-      @provinces = Province.order(:name)
-    end
-    
-    def update
-      if @address.update(address_params)
-        # Set as default if requested
-        if params[:address][:is_default] == "1"
-          current_user.addresses.where.not(id: @address.id).update_all(is_default: false)
-          @address.update(is_default: true)
-        end
-        
-        redirect_to addresses_path, notice: 'Address was successfully updated.'
-      else
-        @provinces = Province.order(:name)
-        render :edit
-      end
-    end
-    
-    def destroy
-      @address.destroy
-      
-      # If we deleted the default address, make another one default
-      if @address.is_default? && current_user.addresses.exists?
-        current_user.addresses.first.update(is_default: true)
-      end
-      
-      redirect_to addresses_path, notice: 'Address was successfully deleted.'
-    end
-    
-    def set_default
-      current_user.addresses.update_all(is_default: false)
-      @address.update(is_default: true)
-      
-      redirect_to addresses_path, notice: 'Default address updated.'
-    end
-    
-    private
-    
-    def set_address
-      @address = current_user.addresses.find(params[:id])
-    end
-    
-    def address_params
-      params.require(:address).permit(:street, :city, :province_id, :postal_code, :country, :is_default)
-    end
+  end
+  
+  # Updated address_params to accept is_default
+  def address_params
+    params.require(:address).permit(:street, :city, :province_id, :postal_code, :country, :is_default)
   end

@@ -15,44 +15,49 @@
           <h5>Shipping Address</h5>
         </div>
         <div class="card-body">
-          <%= form_with(model: @shipping_address, url: checkout_address_path, local: true) do |f| %>
-            <%= f.hidden_field :id if @shipping_address.persisted? %>
-            
-            <div class="mb-3">
-              <%= f.label :street, "Street Address", class: "form-label" %>
-              <%= f.text_field :street, class: "form-control", required: true %>
-            </div>
-            
-            <div class="mb-3">
-              <%= f.label :city, class: "form-label" %>
-              <%= f.text_field :city, class: "form-control", required: true %>
-            </div>
-            
-            <div class="mb-3">
-              <%= f.label :province_id, "Province", class: "form-label" %>
-              <%= f.collection_select :province_id, @provinces, :id, :display_name, {prompt: "Select a province"}, {class: "form-select", required: true} %>
-            </div>
-            
-            <div class="mb-3">
-              <%= f.label :postal_code, class: "form-label" %>
-              <%= f.text_field :postal_code, class: "form-control", required: true %>
-            </div>
-            
-            <div class="mb-3">
-              <%= f.label :country, class: "form-label" %>
-              <%= f.text_field :country, class: "form-control", value: "Canada", required: true %>
-            </div>
-            
-            <div class="form-check mb-3">
-              <%= check_box_tag :is_default, "1", @shipping_address.is_default?, class: "form-check-input" %>
-              <%= label_tag :is_default, "Set as default address", class: "form-check-label" %>
-            </div>
-            
-            <div class="d-flex justify-content-between">
-              <%= link_to "Back to Cart", cart_path, class: "btn btn-secondary" %>
-              <%= f.submit "Continue to Review", class: "btn btn-primary" %>
-            </div>
+        <!-- Update just the form part in app/views/checkout/index.html.erb -->
+        <%= form_with(url: checkout_address_path, method: :post, local: true) do |f| %>
+          <% if @shipping_address.persisted? %>
+            <%= hidden_field_tag 'address[id]', @shipping_address.id %>
           <% end %>
+          
+          <div class="mb-3">
+            <%= label_tag 'address[street]', "Street Address", class: "form-label" %>
+            <%= text_field_tag 'address[street]', @shipping_address.street, class: "form-control", required: true %>
+          </div>
+          
+          <div class="mb-3">
+            <%= label_tag 'address[city]', "City", class: "form-label" %>
+            <%= text_field_tag 'address[city]', @shipping_address.city, class: "form-control", required: true %>
+          </div>
+          
+          <div class="mb-3">
+            <%= label_tag 'address[province_id]', "Province", class: "form-label" %>
+            <%= select_tag 'address[province_id]', 
+                           options_from_collection_for_select(@provinces, 'id', 'display_name', @shipping_address.province_id),
+                           { include_blank: "Select a province", class: "form-select", required: true } %>
+          </div>
+          
+          <div class="mb-3">
+            <%= label_tag 'address[postal_code]', "Postal Code", class: "form-label" %>
+            <%= text_field_tag 'address[postal_code]', @shipping_address.postal_code, class: "form-control", required: true %>
+          </div>
+          
+          <div class="mb-3">
+            <%= label_tag 'address[country]', "Country", class: "form-label" %>
+            <%= text_field_tag 'address[country]', @shipping_address.country || "Canada", class: "form-control", required: true %>
+          </div>
+          
+          <div class="form-check mb-3">
+            <%= check_box_tag 'address[is_default]', "1", @shipping_address.is_default?, class: "form-check-input" %>
+            <%= label_tag 'address[is_default]', "Set as default address", class: "form-check-label" %>
+          </div>
+          
+          <div class="d-flex justify-content-between">
+            <%= link_to "Back to Cart", cart_path, class: "btn btn-secondary" %>
+            <%= submit_tag "Continue to Review", class: "btn btn-primary" %>
+          </div>
+        <% end %>
         </div>
       </div>
     </div>
