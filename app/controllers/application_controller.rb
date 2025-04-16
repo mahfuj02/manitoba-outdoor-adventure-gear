@@ -4,6 +4,29 @@ class ApplicationController < ActionController::Base
   
   private
   
+  
+  helper_method :current_cart
+  
+  def current_cart
+    if user_signed_in?
+      # Create a cart for the user if they don't have one
+      if current_user.cart.nil?
+        current_user.create_cart
+      end
+      current_user.cart
+    else
+      # For guests, use session-based cart
+      cart = Cart.find_by(id: session[:cart_id])
+      
+      # If no cart in session or cart not found, create a new one
+      if cart.nil?
+        cart = Cart.create
+        session[:cart_id] = cart.id
+      end
+      
+      cart
+    end
+  end
   def initialize_cart
     session[:cart] ||= {}
     

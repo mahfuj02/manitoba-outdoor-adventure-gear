@@ -1,0 +1,88 @@
+<!-- app/views/checkout/index.html.erb -->
+<div class="container mt-4">
+  <h1>Checkout</h1>
+  
+  <div class="progress mb-4">
+    <div class="progress-bar" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
+      Step 1: Address Information
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h5>Shipping Address</h5>
+        </div>
+        <div class="card-body">
+          <%= form_with(model: @shipping_address, url: checkout_address_path, local: true) do |f| %>
+            <%= f.hidden_field :id if @shipping_address.persisted? %>
+            
+            <div class="mb-3">
+              <%= f.label :street, "Street Address", class: "form-label" %>
+              <%= f.text_field :street, class: "form-control", required: true %>
+            </div>
+            
+            <div class="mb-3">
+              <%= f.label :city, class: "form-label" %>
+              <%= f.text_field :city, class: "form-control", required: true %>
+            </div>
+            
+            <div class="mb-3">
+              <%= f.label :province_id, "Province", class: "form-label" %>
+              <%= f.collection_select :province_id, @provinces, :id, :display_name, {prompt: "Select a province"}, {class: "form-select", required: true} %>
+            </div>
+            
+            <div class="mb-3">
+              <%= f.label :postal_code, class: "form-label" %>
+              <%= f.text_field :postal_code, class: "form-control", required: true %>
+            </div>
+            
+            <div class="mb-3">
+              <%= f.label :country, class: "form-label" %>
+              <%= f.text_field :country, class: "form-control", value: "Canada", required: true %>
+            </div>
+            
+            <div class="form-check mb-3">
+              <%= check_box_tag :is_default, "1", @shipping_address.is_default?, class: "form-check-input" %>
+              <%= label_tag :is_default, "Set as default address", class: "form-check-label" %>
+            </div>
+            
+            <div class="d-flex justify-content-between">
+              <%= link_to "Back to Cart", cart_path, class: "btn btn-secondary" %>
+              <%= f.submit "Continue to Review", class: "btn btn-primary" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header">
+          <h5>Order Summary</h5>
+        </div>
+        <div class="card-body">
+          <% @cart_items.each do |item| %>
+            <div class="d-flex justify-content-between mb-2">
+              <div>
+                <%= item[:product].name %> x <%= item[:quantity] %>
+              </div>
+              <div>
+                <%= number_to_currency(item[:total]) %>
+              </div>
+            </div>
+          <% end %>
+          <hr>
+          <div class="d-flex justify-content-between fw-bold">
+            <div>Subtotal:</div>
+            <div><%= number_to_currency(@total) %></div>
+          </div>
+          <div class="small text-muted mt-2">
+            Taxes will be calculated at the next step based on your shipping address.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
