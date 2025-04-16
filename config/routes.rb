@@ -38,6 +38,14 @@ Rails.application.routes.draw do
   get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
   get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
 
+
+  resources :orders, only: [:index, :show]
+   # Checkout process
+   get 'checkout', to: 'checkout#index'
+   post 'checkout/address', to: 'checkout#create_address'
+   get 'checkout/review', to: 'checkout#review'
+   post 'checkout/complete', to: 'checkout#complete'
+
   # Defines the root path route ("/")
   # root "posts#index"
 end
