@@ -1,11 +1,21 @@
 # app/controllers/addresses_controller.rb
 class AddressesController < ApplicationController
     before_action :authenticate_user!
-    before_action :set_address, only: [:edit, :update, :destroy, :set_default]
+    before_action :set_address, only: [:show, :edit, :update, :destroy, :set_default]
     
     def index
       @addresses = current_user.addresses
       @address = Address.new
+      @provinces = Province.order(:name)
+    end
+    
+    def show
+      # This action might not be needed, but adding it to resolve the error
+      redirect_to addresses_path
+    end
+    
+    def new
+      @address = current_user.addresses.build
       @provinces = Province.order(:name)
     end
     
