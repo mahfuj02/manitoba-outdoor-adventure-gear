@@ -43,26 +43,58 @@
                 </tr>
               <% end %>
             </tbody>
-            <tfoot>
-              <tr>
-                <td colspan="3" class="text-end"><strong>Subtotal:</strong></td>
-                <td class="text-end"><%= number_to_currency(@order.order_items.sum(&:subtotal)) %></td>
-              </tr>
-              <tr>
-                <td colspan="3" class="text-end"><strong>Tax:</strong></td>
-                <td class="text-end"><%= number_to_currency(@order.tax_amount) %></td>
-              </tr>
-              <tr>
-                <td colspan="3" class="text-end"><strong>Total:</strong></td>
-                <td class="text-end"><%= number_to_currency(@order.total_amount) %></td>
-              </tr>
-            </tfoot>
           </table>
         </div>
       </div>
     </div>
     
     <div class="col-md-4">
+      <!-- Order Summary Card -->
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5>Order Summary</h5>
+        </div>
+        <div class="card-body">
+          <div class="d-flex justify-content-between mb-2">
+            <div>Subtotal:</div>
+            <div><%= number_to_currency(@order.order_items.sum(&:subtotal)) %></div>
+          </div>
+          
+          <% if @order.shipping_address&.province %>
+            <% province = @order.shipping_address.province %>
+            <% subtotal = @order.order_items.sum(&:subtotal) %>
+            
+            <% if province.gst > 0 %>
+              <div class="d-flex justify-content-between mb-2">
+                <div>GST (<%= province.gst %>%):</div>
+                <div><%= number_to_currency(subtotal * province.gst / 100) %></div>
+              </div>
+            <% end %>
+            
+            <% if province.pst > 0 %>
+              <div class="d-flex justify-content-between mb-2">
+                <div>PST (<%= province.pst %>%):</div>
+                <div><%= number_to_currency(subtotal * province.pst / 100) %></div>
+              </div>
+            <% end %>
+            
+            <% if province.hst > 0 %>
+              <div class="d-flex justify-content-between mb-2">
+                <div>HST (<%= province.hst %>%):</div>
+                <div><%= number_to_currency(subtotal * province.hst / 100) %></div>
+              </div>
+            <% end %>
+          <% end %>
+          
+          <hr>
+          <div class="d-flex justify-content-between fw-bold">
+            <div>Total:</div>
+            <div><%= number_to_currency(@order.total_amount) %></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Shipping Address Card -->
       <div class="card mb-4">
         <div class="card-header">
           <h5>Shipping Address</h5>
@@ -76,6 +108,7 @@
         </div>
       </div>
       
+      <!-- Customer Information Card -->
       <div class="card">
         <div class="card-header">
           <h5>Customer Information</h5>

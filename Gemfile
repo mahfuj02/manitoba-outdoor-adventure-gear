@@ -24,7 +24,7 @@ gem 'sassc-rails'
 gem 'image_processing', '~> 1.2'
 gem 'bootstrap', '~> 5.2.3'
 gem 'kaminari'
-
+gem 'faker'
 
 # Use Redis adapter to run Action Cable in production
 # gem "redis", ">= 4.0.1"
