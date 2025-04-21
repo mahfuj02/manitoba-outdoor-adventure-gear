@@ -45,11 +45,6 @@
             <li class="nav-item">
               <a class="nav-link" href="<%= contact_path %>">Contact</a>
             </li>
-            <% if user_signed_in? %>
-              <li class="nav-item">
-                <%= link_to "My Orders", orders_path, class: "nav-link" %>
-              </li>
-            <% end %>
             <!-- Cart dropdown -->
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="cartDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -78,7 +73,8 @@
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                   <li><%= link_to "My Profile", edit_user_registration_path, class: "dropdown-item" %></li>
                   <li><%= link_to "My Addresses", addresses_path, class: "dropdown-item" %></li>
-                  <li><%= link_to "My Orders", orders_path, class: "dropdown-item" %></li>
+                  <li><%= link_to "My Order", orders_path, class: "dropdown-item" %></li>
+
                   <li><hr class="dropdown-divider"></li>
                   <li>
                     <%= button_to "Sign Out", destroy_user_session_path, method: :delete, class: "dropdown-item", form: { data: { turbo: false } } %>
