@@ -1,3 +1,4 @@
+# config/application.rb
 require_relative "boot"
 
 require "rails/all"
@@ -18,6 +19,8 @@ module ManitobaOutdoorAdventureGear
 
     config.session_store :cookie_store, key: '_manitoba_outdoor_adventure_gear_session'
 
+    # Remove the ActiveAdmin customization for now
+    # We'll handle ActiveAdmin styling differently later
 
     # Configuration for the application, engines, and railties goes here.
     #

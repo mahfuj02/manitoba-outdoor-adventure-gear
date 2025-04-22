@@ -48,5 +48,6 @@ Rails.application.routes.draw do
   get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
 
   # Root path
-  root 'products#index'
+  root 'home#index'
+  # root 'products#index'
 end

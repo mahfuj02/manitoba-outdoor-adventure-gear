@@ -1,0 +1,130 @@
+<!-- app/views/home/index.html.erb -->
+<div class="container mt-4">
+  <h1>Welcome to Manitoba Outdoor Adventure Gear</h1>
+  <!-- Banner/Hero Section -->
+  <section class="position-relative mb-5">
+    <div class="w-100" style="background-color: #1B5E41;">
+      <!-- Full-width image container -->
+      <div class="position-relative" style="height: 500px; overflow: hidden;">
+        <!-- Background image that covers the entire section -->
+        <img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" 
+             class="position-absolute w-100 h-100" 
+             style="object-fit: cover;"
+             alt="Manitoba Wilderness">
+        
+        <!-- Overlay gradient for better text readability -->
+        <div class="position-absolute top-0 start-0 w-100 h-100" style="background-color: rgba(27, 94, 65, 0.5);"></div>
+        
+        <!-- Content positioned over the image -->
+        <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center">
+          <div class="container">
+            <div class="col-md-8 col-lg-6">
+              <h1 class="display-4 fw-bold text-white mb-3">Gear Up for Manitoba's Great Outdoors</h1>
+              <p class="lead text-white mb-4">Quality equipment for camping, hiking, fishing and more. Built for Manitoba's wilderness.</p>
+              <div class="d-flex flex-wrap gap-2">
+                <a href="<%= products_path %>" class="btn btn-warning btn-lg me-2">Shop Now</a>
+                <a href="<%= about_path %>" class="btn btn-light btn-lg text-success">Learn More</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <div class="row mt-5">
+  <div class="col-12">
+    <h2 class="text-center mb-4">Featured Products</h2>
+    <div class="row g-4">
+      <% @featured_products.each do |product| %>
+        <div class="col-lg-6 col-md-6">
+          <div class="card product-card h-100 border-0">
+            <% if product.image.attached? %>
+              <%= image_tag product.image, class: "card-img-top img-fluid", alt: product.name, style: "height: 300px; object-fit: cover;" %>
+            <% else %>
+              <div class="bg-light p-5 text-center text-muted d-flex align-items-center justify-content-center" style="height: 300px;">
+                <span>No Image Available</span>
+              </div>
+            <% end %>
+            <div class="card-body d-flex flex-column align-items-center">
+              <h5 class="card-title"><%= product.name %></h5>
+              <p class="card-text text-muted"><%= truncate(product.description, length: 100) if product.description %></p>
+              <div class="mt-auto">
+                <p class="h5 text-primary"><%= number_to_currency(product.price) %></p>
+                <%= link_to "View Details", product_path(product), 
+                    class: "btn btn-lg btn-primary mt-2 text-white" %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<!-- Sale Products Section -->
+<section class="container my-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">On Sale</h2>
+    <a href="<%= products_path(filter: 'on_sale') %>" class="btn btn-secondary">View All</a>
+  </div>
+  
+  <div class="row">
+    <% @sale_products.each do |product| %>
+      <div class="col-6 col-md-3 mb-4">
+        <div class="card h-100">
+          <div class="position-relative">
+            <% if product.image.attached? %>
+              <%= image_tag product.image, class: "card-img-top", style: "height: 200px; object-fit: cover;" %>
+            <% else %>
+              <div class="bg-secondary text-white d-flex justify-content-center align-items-center" style="height: 200px;">
+                No Image
+              </div>
+            <% end %>
+            <span class="position-absolute top-0 end-0 bg-danger text-white m-2 px-2 py-1 small rounded">SALE</span>
+          </div>
+          <div class="card-body align-items-center">
+            <h5 class="card-title"><%= product.name %></h5>
+            <p class="card-text">
+              <span class="text-decoration-line-through text-muted">$<%= sprintf('%.2f', product.price) %></span>
+              <span class="text-danger fw-bold">$<%= sprintf('%.2f', product.sale_price) %></span>
+            </p>
+            <%= link_to "View Details", product_path(product), class: "btn btn-primary" %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</section>
+
+<!-- New Arrivals Section -->
+<section class="container my-5 pb-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">New Arrivals</h2>
+    <a href="<%= products_path(filter: 'new_products') %>" class="btn btn-secondary">View All</a>
+  </div>
+  
+  <div class="row">
+    <% @new_products.each do |product| %>
+      <div class="col-6 col-md-3 mb-4">
+        <div class="card h-100">
+          <div class="position-relative">
+            <% if product.image.attached? %>
+              <%= image_tag product.image, class: "card-img-top", style: "height: 200px; object-fit: cover;" %>
+            <% else %>
+              <div class="bg-secondary text-white d-flex justify-content-center align-items-center" style="height: 200px;">
+                No Image
+              </div>
+            <% end %>
+            <span class="position-absolute top-0 end-0 bg-warning text-dark m-2 px-2 py-1 small rounded">NEW</span>
+          </div>
+          <div class="card-body align-items-center">
+            <h5 class="card-title"><%= product.name %></h5>
+            <p class="card-text fw-bold">$<%= sprintf('%.2f', product.price) %></p>
+            <%= link_to "View Details", product_path(product), class: "btn btn-primary" %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</section>
