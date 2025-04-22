@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_04_16_052451) do
+ActiveRecord::Schema[7.2].define(version: 2025_04_21_232604) do
   create_table "about_pages", force: :cascade do |t|
     t.text "content"
     t.datetime "created_at", null: false
@@ -128,6 +128,21 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_16_052451) do
     t.index ["product_id"], name: "index_order_items_on_product_id"
   end
 
+  create_table "order_taxes", force: :cascade do |t|
+    t.integer "order_id", null: false
+    t.decimal "gst_rate", precision: 5, scale: 2, default: "0.0"
+    t.decimal "pst_rate", precision: 5, scale: 2, default: "0.0"
+    t.decimal "hst_rate", precision: 5, scale: 2, default: "0.0"
+    t.decimal "gst_amount", precision: 10, scale: 2, default: "0.0"
+    t.decimal "pst_amount", precision: 10, scale: 2, default: "0.0"
+    t.decimal "hst_amount", precision: 10, scale: 2, default: "0.0"
+    t.string "province_code"
+    t.string "province_name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["order_id"], name: "index_order_taxes_on_order_id"
+  end
+
   create_table "orders", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "order_number", null: false
@@ -213,6 +228,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_16_052451) do
   add_foreign_key "carts", "users"
   add_foreign_key "order_items", "orders"
   add_foreign_key "order_items", "products"
+  add_foreign_key "order_taxes", "orders"
   add_foreign_key "orders", "addresses", column: "billing_address_id"
   add_foreign_key "orders", "addresses", column: "shipping_address_id"
   add_foreign_key "orders", "users"

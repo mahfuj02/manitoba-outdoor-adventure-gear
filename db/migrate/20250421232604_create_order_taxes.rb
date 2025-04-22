@@ -1,7 +1,3 @@
-# db/migrate/xxxxxx_create_order_taxes.rb
-# Replace xxxxxx with your timestamp when creating this migration
-# rails generate migration CreateOrderTaxes
-
 class CreateOrderTaxes < ActiveRecord::Migration[6.1]
   def change
     create_table :order_taxes do |t|

@@ -60,30 +60,32 @@
             <div><%= number_to_currency(@order.order_items.sum(&:subtotal)) %></div>
           </div>
           
-          <% if @order.shipping_address&.province %>
-            <% province = @order.shipping_address.province %>
-            <% subtotal = @order.order_items.sum(&:subtotal) %>
-            
-            <% if province.gst > 0 %>
+          <% if @order.order_tax.present? %>
+            <% if @order.order_tax.gst_rate > 0 %>
               <div class="d-flex justify-content-between mb-2">
-                <div>GST (<%= province.gst %>%):</div>
-                <div><%= number_to_currency(subtotal * province.gst / 100) %></div>
+                <div>GST (<%= @order.order_tax.gst_rate %>%):</div>
+                <div><%= number_to_currency(@order.order_tax.gst_amount) %></div>
               </div>
             <% end %>
             
-            <% if province.pst > 0 %>
+            <% if @order.order_tax.pst_rate > 0 %>
               <div class="d-flex justify-content-between mb-2">
-                <div>PST (<%= province.pst %>%):</div>
-                <div><%= number_to_currency(subtotal * province.pst / 100) %></div>
+                <div>PST (<%= @order.order_tax.pst_rate %>%):</div>
+                <div><%= number_to_currency(@order.order_tax.pst_amount) %></div>
               </div>
             <% end %>
             
-            <% if province.hst > 0 %>
+            <% if @order.order_tax.hst_rate > 0 %>
               <div class="d-flex justify-content-between mb-2">
-                <div>HST (<%= province.hst %>%):</div>
-                <div><%= number_to_currency(subtotal * province.hst / 100) %></div>
+                <div>HST (<%= @order.order_tax.hst_rate %>%):</div>
+                <div><%= number_to_currency(@order.order_tax.hst_amount) %></div>
               </div>
             <% end %>
+          <% else %>
+            <div class="d-flex justify-content-between mb-2">
+              <div>Tax:</div>
+              <div><%= number_to_currency(@order.tax_amount) %></div>
+            </div>
           <% end %>
           
           <hr>

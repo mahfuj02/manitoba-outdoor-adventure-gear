@@ -101,8 +101,14 @@ class CheckoutController < ApplicationController
     
     load_cart_items
     
-    # Calculate tax
-    @tax_amount = calculate_tax(@total, @shipping_address.province)
+    province = @shipping_address.province
+    
+    # Calculate tax amounts
+    subtotal = @total
+    gst_amount = province.gst > 0 ? (subtotal * province.gst / 100).round(2) : 0
+    pst_amount = province.pst > 0 ? (subtotal * province.pst / 100).round(2) : 0
+    hst_amount = province.hst > 0 ? (subtotal * province.hst / 100).round(2) : 0
+    @tax_amount = gst_amount + pst_amount + hst_amount
     @grand_total = @total + @tax_amount
     
     # Create the order
@@ -118,6 +124,18 @@ class CheckoutController < ApplicationController
     
     ActiveRecord::Base.transaction do
       if @order.save
+        # Save tax information at time of purchase
+        @order.create_order_tax(
+          gst_rate: province.gst,
+          pst_rate: province.pst,
+          hst_rate: province.hst,
+          gst_amount: gst_amount,
+          pst_amount: pst_amount,
+          hst_amount: hst_amount,
+          province_code: province.code,
+          province_name: province.name
+        )
+        
         # Create order items from cart items
         @cart_items.each do |item|
           @order.order_items.create!(
