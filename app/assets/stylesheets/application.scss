@@ -1,0 +1,248 @@
+// Variables
+$primary: #1B5E41;
+$primary-light: #2D8C61;
+$primary-dark: #113d2a;
+$secondary: #D4A72C;
+$secondary-light: #F4D16A;
+$neutral-light: white;
+$secondary-dark: #A67E1F;
+
+// Base styles
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+// Typography
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Montserrat', system-ui, sans-serif;
+}
+
+// Active Admin overrides
+.active_admin {
+  .button, input[type=submit] {
+    all: unset;
+  }
+
+  .product-page {
+    input[type=submit],
+    input[type=button],
+    form button {
+      background: $primary !important;
+      background-image: none !important;
+      background-color: $primary !important;
+      box-shadow: none !important;
+    }
+  }
+}
+
+// Buttons
+.btn-primary {
+  background-color: $primary;
+  border-color: $primary;
+  color: white !important;
+  background-image: none !important;
+
+  &:hover {
+    background-color: $neutral-light !important;
+    color: $primary-light !important;
+    border-color: $primary;
+    background-image: none !important;
+  }
+}
+
+body .container input[type="submit"].btn-primary {
+  @extend .btn-primary;
+}
+
+.btn-danger {
+  background-color: white;
+  border-color: red;
+  background-image: none !important;
+  color: red !important;
+}
+
+.btn-secondary {
+  color: $primary !important;
+  background-color: $neutral-light;
+  border: 1px solid $primary;
+  background-image: none !important;
+
+  &:hover {
+    color: $neutral-light !important;
+    background-color: $primary;
+    border: 1px solid $primary;
+    background-image: none !important;
+  }
+}
+
+.btn.search-btn {
+  color: $primary !important;
+  background-color: $neutral-light !important;
+  border: 1px solid $primary;
+  background-image: none !important;
+}
+
+// Text colors
+.text-primary {
+  color: $primary !important;
+}
+
+.text-warning {
+  color: $secondary !important;
+}
+
+// Components
+.navbar-dark {
+  background-color: $primary;
+}
+
+.site-footer {
+  background-color: $primary-dark;
+  color: white;
+}
+
+.hero-section {
+  background-color: $primary;
+  color: white;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('https://images.unsplash.com/photo-1501785888041-af3ef285b470');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.2;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+// Category
+.category-item {
+  color: $primary !important;
+  background-color: $neutral-light !important;
+}
+
+// User profile
+.dropdown-menu {
+  min-width: 200px;
+  padding: 0.5rem 0;
+  border: none;
+}
+
+.dropdown-item {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  color: $primary !important;
+
+  &:hover {
+    background-color: $primary !important;
+    color: $neutral-light !important;
+  }
+}
+
+.log-out {
+  color: $neutral-light !important;
+  background-color: red !important;
+}
+
+// Product card
+.product-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+  }
+}
+
+// Text utilities
+.text-white-75 {
+  color: rgba(255, 255, 255, 0.75) !important;
+}
+
+.text-white-50 {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+// Links
+a {
+  text-decoration: none !important;
+
+  &:hover {
+    text-decoration: underline !important;
+  }
+}
+
+.footer-link {
+  color: rgba(255, 255, 255, 0.75);
+  text-decoration: none;
+
+  &:hover {
+    color: $secondary-light;
+    text-decoration: none;
+  }
+}
+
+// Layout
+main {
+  flex-grow: 1;
+}
+
+// Pagination
+.pagination {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+
+  li {
+    margin: 0 0.2rem;
+  }
+
+  a, span {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    border: 1px solid $primary;
+    color: $primary !important;
+    background-color: $neutral-light !important;
+    border-radius: 4px;
+  }
+
+  .page.current {
+    background-color: $primary !important;
+    color: white;
+    border: 1px solid $primary !important;
+  }
+
+  a:hover {
+    background-color: rgba($primary, 0.1);
+  }
+
+  .page.gap {
+    border: none;
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .hero-section {
+    text-align: center;
+  }
+  
+  .category-card {
+    height: 150px;
+  }
+}

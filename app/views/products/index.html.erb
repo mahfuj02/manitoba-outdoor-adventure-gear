@@ -1,0 +1,143 @@
+<%# app/views/products/index.html.erb %>
+<%= render 'shared/breadcrumb' %>
+
+<div class="container my-5">
+  <%# Page heading based on filter type %>
+  <div class="row mb-4">
+    <div class="col-12">
+      <% if @search_term.present? %>
+        <h1 class="text-primary">Search Results for "<%= @search_term %>"</h1>
+        <% if @category.present? %>
+          <p>In category: <%= @category.name %></p>
+        <% end %>
+      <% elsif @category.present? %>
+        <h1 class="text-primary"><%= @category.name %></h1>
+        <p><%= @category.description %></p>
+      <% elsif @filter_name.present? %>
+        <h1 class="text-primary"><%= @filter_name %> Products</h1>
+      <% else %>
+        <h1 class="text-primary">All Products</h1>
+        <p>Discover the best outdoor equipment for your Manitoba adventures.</p>
+      <% end %>
+    </div>
+  </div>
+
+  <%# Search and filter section %>
+  <div class="row mb-4">
+    <div class="col-md-4 mb-3 mb-md-0">
+      <%# Search form %>
+      <form action="<%= products_path %>" method="get" class="d-flex">
+        <input type="text" name="search" value="<%= @search_term %>" class="form-control me-2" placeholder="Search products...">
+        <button class="btn search-btn" style="background-color: #1B5541 !important; color: white !important;" type="submit">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+              <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+            </svg>
+          </button>
+      </form>
+    </div>
+    <div class="col-md-8">
+      <div class="d-flex flex-wrap justify-content-md-end">
+        <%# Category filter %>
+        <div class="me-2 mb-2">
+          <select class="form-select btn-secondary" id="categoryFilter" onchange="location = this.value;">
+            <option value="<%= products_path %>">All Categories</option>
+            <% Category.all.each do |category| %>
+              <option value="<%= products_path(category_id: category.id) %>" <%= 'selected' if @category&.id == category.id %>>
+                <%= category.name %>
+              </option>
+            <% end %>
+          </select>
+        </div>
+        
+        <%# Other filters %>
+        <div class="d-flex flex-wrap">
+        <%= link_to "All Products", products_path, 
+        class: "btn #{params[:filter].blank? ? 'btn-primary' : 'btn-secondary'} me-2 mb-2" %>
+    
+    <%= link_to "On Sale", products_path(filter: 'on_sale'), 
+        class: "btn #{params[:filter] == 'on_sale' ? 'btn-primary' : 'btn-secondary'} me-2 mb-2" %>
+    
+    <%= link_to "New Arrivals", products_path(filter: 'new'), 
+        class: "btn #{params[:filter] == 'new' ? 'btn-primary' : 'btn-secondary'} me-2 mb-2" %>
+    
+    <%= link_to "Recently Updated", products_path(filter: 'recently_updated'), 
+        class: "btn #{params[:filter] == 'recently_updated' ? 'btn-primary' : 'btn-secondary'} mb-2" %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%# Products grid %>
+  <div class="row">
+    <% if @products.any? %>
+      <% @products.each do |product| %>
+        <div class="col-sm-6 col-md-4 mb-4">
+          <div class="card h-100 product-card shadow-sm">
+            <%# Product image %>
+            <% if product.image.attached? %>
+              <%= link_to product_path(product) do %>
+                <%= image_tag product.image, class: "card-img-top", style: "height: 200px; object-fit: cover;", alt: product.name %>
+              <% end %>
+            <% else %>
+              <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                <span class="text-muted">No image available</span>
+              </div>
+            <% end %>
+            
+            <div class="card-body d-flex flex-column ">
+              <%# Product title %>
+              <h5 class="card-title">
+                <%= link_to product.name, product_path(product), class: "text-primary" %>
+              </h5>
+              
+              <%# Product description preview %>
+              <p class="card-text flex-grow-1"><%= truncate(product.description, length: 80) %></p>
+              
+              <%# Product badges %>
+              <div class="mb-2">
+                <% if product.is_new? %>
+                  <span class="badge bg-success me-1">New!</span>
+                <% end %>
+                <% if product.on_sale? && product.sale_price.present? %>
+                  <span class="badge bg-danger">Sale!</span>
+                <% end %>
+                <% if product.stock_quantity <= 0 %>
+                  <span class="badge bg-secondary">Out of Stock</span>
+                <% elsif product.stock_quantity < 5 %>
+                  <span class="badge bg-warning text-dark">Low Stock</span>
+                <% end %>
+              </div>
+              
+              <%# Product price %>
+              <div class="mb-3">
+                <% if product.on_sale? && product.sale_price.present? %>
+                  <span class="text-decoration-line-through text-muted me-2"><%= number_to_currency(product.price) %></span>
+                  <span class="fw-bold text-danger"><%= number_to_currency(product.sale_price) %></span>
+                <% else %>
+                  <span class="fw-bold text-primary"><%= number_to_currency(product.price) %></span>
+                <% end %>
+              </div>
+              
+              <%# Call to action button %>
+              <div class="d-grid align-items-center justify-content-center">
+                <%= link_to "View Details", product_path(product), class: "btn btn-sm  btn-primary" %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="col-12">
+        <div class="alert alert-info">
+          No products found for your selection. <%= link_to "View all products", products_path %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  
+  <%# Pagination %>
+  <div class="d-flex justify-content-center mt-4">
+  <%= paginate @products, class: 'custom-pagination' %>
+
+  </div>
+</div>

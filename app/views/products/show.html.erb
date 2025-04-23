@@ -1,0 +1,200 @@
+<%# app/views/products/show.html.erb %>
+<%= render 'shared/breadcrumb' %>
+
+<div class="container my-4">
+  <div class="row">
+    <!-- Product image column -->
+    <div class="col-md-5 mb-4">
+      <div class="card border-0 bg-light">
+        <% if @product.image.attached? %>
+          <%= image_tag @product.image, class: "img-fluid p-4", alt: @product.name %>
+        <% else %>
+          <div class="bg-light d-flex align-items-center justify-content-center" style="height: 400px;">
+            <span class="text-muted">No image available</span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    
+    <!-- Product details column -->
+    <div class="col-md-7">
+      <h1 class="text-primary mb-0"><%= @product.name %></h1>
+      
+      <!-- Category and SKU -->
+      <div class="mb-3">
+        <% if @product.category.present? %>
+          <%= link_to @product.category.name, products_path(category_id: @product.category.id), class: "text-muted small" %>
+        <% end %>
+        
+        <% if @product.sku.present? %>
+          <span class="text-muted small ms-2">SKU: <%= @product.sku %></span>
+        <% end %>
+      </div>
+      
+      <!-- Pricing information -->
+      <div class="mb-4">
+        <% if @product.on_sale? && @product.sale_price.present? %>
+          <h3 class="text-danger mb-0 d-inline-block"><%= number_to_currency(@product.sale_price) %></h3>
+          <span class="text-decoration-line-through text-muted ms-2"><%= number_to_currency(@product.price) %></span>
+          <span class="badge bg-danger ms-2">Sale!</span>
+          <p class="text-success mt-1">You save: <%= number_to_currency(@product.price - @product.sale_price) %></p>
+        <% else %>
+          <h3 class="text-primary mb-0"><%= number_to_currency(@product.price) %></h3>
+        <% end %>
+      </div>
+      
+      <!-- Product badges/availability -->
+      <div class="mb-4">
+        <% if @product.is_new? %>
+          <span class="badge bg-success me-2">New Arrival</span>
+        <% end %>
+        
+        <% if @product.stock_quantity > 0 %>
+          <span class="badge bg-success me-2">In Stock</span>
+        <% else %>
+          <span class="badge bg-danger">Out of Stock</span>
+        <% end %>
+      </div>
+      
+      <!-- Add to cart form -->
+      <div class="card border-0 mb-4">
+        <div class="card-body px-0">
+          <%= form_with url: add_to_cart_path(@product), method: :post, data: { turbo: false }, local: true do %>
+            <%= hidden_field_tag :product_id, @product.id %>
+            
+            <div class="row align-items-center mb-3">
+              <div class="col-md-3">
+                <label for="quantity" class="form-label">Quantity:</label>
+              </div>
+              <div class="col-md-9">
+                <div class="input-group" style="max-width: 150px;">
+                  <button type="button" class="btn btn-primary" onclick="decrementQuantity()">-</button>
+                  <%= number_field_tag :quantity, 1, min: 1, max: @product.stock_quantity, 
+                      class: "form-control text-center", id: "quantity", 
+                      disabled: (@product.stock_quantity <= 0) %>
+                  <button type="button" class="btn btn-primary" onclick="incrementQuantity()">+</button>
+                </div>
+              </div>
+            </div>
+            
+            <div class: "btn-primary" style="max-width: 400px;">
+
+
+              <%= button_tag type: 'submit', class: "btn btn-primary w-100 py-2", disabled: (@product.stock_quantity <= 0) do %>
+                Add to Cart
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+      
+      <!-- Tags -->
+      <% if @product.respond_to?(:tags) && @product.tags.any? %>
+        <div class="mb-4">
+          <strong class="d-block mb-2">Tags:</strong>
+          <div>
+            <% @product.tags.each do |tag| %>
+              <%= link_to tag.name, products_path(tag_id: tag.id), class: "badge product-tag me-1 mb-1" %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+      
+      <!-- Description -->
+      <div class="mb-4">
+        <h5>Description</h5>
+        <hr>
+        <div class="product-description">
+          <%= @product.description %>
+        </div>
+      </div>
+      
+      <!-- Specifications -->
+      <% if @product.respond_to?(:weight) || @product.respond_to?(:dimensions) %>
+        <div class="mb-4">
+          <h5>Specifications</h5>
+          <hr>
+          <table class="table specs-table">
+            <tbody>
+              <% if @product.respond_to?(:sku) && @product.sku.present? %>
+                <tr>
+                  <td class="fw-bold" style="width: 150px;">SKU</td>
+                  <td><%= @product.sku %></td>
+                </tr>
+              <% end %>
+              <% if @product.respond_to?(:weight) && @product.weight.present? %>
+                <tr>
+                  <td class="fw-bold">Weight</td>
+                  <td><%= @product.weight %> kg</td>
+                </tr>
+              <% end %>
+              <% if @product.respond_to?(:dimensions) && @product.dimensions.present? %>
+                <tr>
+                  <td class="fw-bold">Dimensions</td>
+                  <td><%= @product.dimensions %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  
+  <!-- Related products section -->
+  <% if @product.category && @product.category.products.where.not(id: @product.id).any? %>
+    <div class="row mt-5">
+      <div class="col-12">
+        <h3 class="text-primary mb-4">You might also like</h3>
+      </div>
+      
+      <% @product.category.products.where.not(id: @product.id).limit(3).each do |related_product| %>
+        <div class="col-md-4 mb-4">
+          <div class="card h-100 product-card shadow-sm">
+            <% if related_product.image.attached? %>
+              <%= link_to product_path(related_product) do %>
+                <%= image_tag related_product.image, class: "card-img-top p-3", style: "height: 200px; object-fit: contain;", alt: related_product.name %>
+              <% end %>
+            <% else %>
+              <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                <span class="text-muted">No image available</span>
+              </div>
+            <% end %>
+            
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title align-itmes-start"><%= related_product.name %></h5>
+              <p class="card-text text-muted"><%= truncate(related_product.description, length: 100) if related_product.description %></p>
+              <div class="mt-auto">
+                <p class="h5 text-primary"><%= number_to_currency(related_product.price) %></p>
+                <%= link_to "View Details", product_path(related_product), 
+                    class: "btn btn-sm btn-primary  mt-auto align-self-center" %>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+
+<script>
+  function incrementQuantity() {
+    const quantityField = document.getElementById('quantity');
+    const maxQuantity = <%= @product.stock_quantity %>;
+    let currentValue = parseInt(quantityField.value, 10);
+    
+    if (currentValue < maxQuantity) {
+      quantityField.value = currentValue + 1;
+    }
+  }
+  
+  function decrementQuantity() {
+    const quantityField = document.getElementById('quantity');
+    let currentValue = parseInt(quantityField.value, 10);
+    
+    if (currentValue > 1) {
+      quantityField.value = currentValue - 1;
+    }
+  }
+</script>

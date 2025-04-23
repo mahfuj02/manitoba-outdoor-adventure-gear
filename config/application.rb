@@ -1,3 +1,4 @@
+# config/application.rb
 require_relative "boot"
 
 require "rails/all"
@@ -15,6 +16,11 @@ module ManitobaOutdoorAdventureGear
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     config.autoload_lib(ignore: %w[assets tasks])
+
+    config.session_store :cookie_store, key: '_manitoba_outdoor_adventure_gear_session'
+
+    # Remove the ActiveAdmin customization for now
+    # We'll handle ActiveAdmin styling differently later
 
     # Configuration for the application, engines, and railties goes here.
     #
