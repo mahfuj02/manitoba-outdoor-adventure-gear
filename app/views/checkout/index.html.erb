@@ -22,13 +22,22 @@
               <div class="mb-3">
                 <% @addresses.each do |address| %>
                   <div class="form-check mb-2 p-2 border rounded <%= 'border-success ' if address.is_default? %>">
+
                     <%= radio_button_tag 'selected_address_id', address.id, 
                                         address.id.to_s == @selected_address_id.to_s, 
                                         class: 'form-check-input  me-2' %>
                     <label class="form-check-label " for="selected_address_id_<%= address.id %>">
                       <strong><%= current_user.full_name %></strong><br>
                       <%= address.street %><br>
-                      <%= address.city %>, <%= address.province.name %> <%= address.postal_code %><br>
+                      <%= address.city %>
+                      <%= address.city %>
+                      <% if address.province.nil? %>
+                        No province
+                      <% else %>
+                        <%= address.province.name %>
+                      <% end %>
+                      <%= address.postal_code %><br>
+                      <%= address.postal_code %><br>
                       <%= address.country %>
                       <% if address.is_default? %>
                         <span class="badge bg-success ms-2">Default</span>

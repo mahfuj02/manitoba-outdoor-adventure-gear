@@ -1,4 +1,4 @@
-version: '3'
+# Remove the version line or update it
 services:
   web:
     build: .

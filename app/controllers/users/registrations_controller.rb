@@ -7,7 +7,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
     def new
       super do |resource|
         @provinces = Province.order(:name)
-        resource.build_address if resource.address.nil?
+        resource.addresses.build if resource.addresses.empty?
       end
     end
 
