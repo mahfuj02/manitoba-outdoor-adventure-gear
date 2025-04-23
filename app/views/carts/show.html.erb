@@ -26,7 +26,7 @@
                   <% if item[:product].image.attached? %>
                     <%= image_tag item[:product].image.variant(resize_to_limit: [50, 50]), class: "me-3" %>
                   <% else %>
-                    <div class="bg-secondary text-white d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                    <div class="bg-success text-white d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
                       <small>No image</small>
                     </div>
                   <% end %>
@@ -43,7 +43,7 @@
                 <%= form_with url: update_cart_item_path(item[:product].id), method: :patch, local: true do %>
                   <div class="d-flex align-items-center">
                     <%= number_field_tag :quantity, item[:quantity], min: 1, max: item[:product].stock_quantity, class: "form-control form-control-sm", style: "width: 70px;" %>
-                    <%= submit_tag "Update", class: "btn btn-sm btn-outline-primary ms-2" %>
+                    <%= submit_tag "Update", class: "btn btn-sm btn-primary ms-2" %>
                   </div>
                 <% end %>
               </td>
@@ -72,7 +72,7 @@
     
     <div class="row mt-4">
       <div class="col-md-6">
-        <%= link_to products_path, class: "btn btn-outline-secondary" do %>
+        <%= link_to products_path, class: "btn btn-secondary" do %>
           <i class="bi bi-arrow-left"></i> Continue Shopping
         <% end %>
       </div>

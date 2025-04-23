@@ -59,7 +59,14 @@
     background-color: var(--primary);
     border-color: var(--primary);
     color: white !important;
-    background-image: none;
+    background-image: none !important;
+  }
+
+  .btn-danger {
+    background-color: white;
+    border-color: red;
+    background-image: none !important;
+    color: red !important;
   }
   
   .btn-primary:hover {
