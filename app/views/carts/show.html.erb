@@ -4,7 +4,8 @@
   
   <% if @cart_items.empty? %>
     <div class="alert alert-info">
-      Your cart is empty. <a href="<%= products_path %>">Continue shopping</a>.
+      Your cart is empty.<br> <br>
+      <a class="btn btn-secondary" href="<%= products_path %>">Continue shopping</a>.
     </div>
   <% else %>
     <div class="table-responsive">

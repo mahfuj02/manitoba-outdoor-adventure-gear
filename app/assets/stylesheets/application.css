@@ -80,6 +80,7 @@
     color: var(--primary) !important;
     background-color: var(--neutral-light);
     border:1px solid var(--primary);
+    background-image: none!important;
   }
   .btn.search-btn {
     color: var(--primary) !important;
@@ -93,6 +94,8 @@
     color: var(--neutral-light) !important;
     background-color: var(--primary);
     border:1px solid var(--primary);
+    background-image: none!important;
+
   }
 
   .text-primary {
