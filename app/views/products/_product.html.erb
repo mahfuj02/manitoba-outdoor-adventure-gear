@@ -1,37 +1,70 @@
-
-<!-- app/views/products/_product.html.erb (partial) -->
-<div class="card h-100">
-  <% if product.image.attached? %>
-    <%= image_tag product.image, class: "card-img-top", alt: product.name %>
-  <% else %>
-    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
-      <span class="text-muted">No image available</span>
-    </div>
+<%# app/views/products/_product.html.erb %>
+<div class="card h-100 product-card shadow-sm">
+  <%# Product image with link %>
+  <%= link_to product_path(product) do %>
+    <% if product.image.attached? %>
+      <%= image_tag product.image, class: "card-img-top", style: "height: 200px; object-fit: cover;", alt: product.name %>
+    <% else %>
+      <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+        <span class="text-muted">No image available</span>
+      </div>
+    <% end %>
   <% end %>
 
-  <div class="card-body">
-    <h5 class="card-title"><%= product.name %></h5>
-    <p class="card-text"><%= truncate(product.description, length: 100) %></p>
+  <div class="card-body d-flex flex-column">
+    <%# Product title with link %>
+    <h5 class="card-title">
+      <%= link_to product.name, product_path(product), class: "text-primary" %>
+    </h5>
     
-    <!-- Updated price display with sale information -->
-    <% if product.on_sale? && product.sale_price.present? %>
-      <p class="card-text">
-        <span class="text-decoration-line-through"><%= number_to_currency(product.price) %></span>
-        <span class="text-danger fw-bold"><%= number_to_currency(product.sale_price) %></span>
-        <span class="badge bg-danger">Sale!</span>
+    <%# Category (if available) %>
+    <% if product.category.present? %>
+      <p class="card-text text-muted small mb-2">
+        <i class="bi bi-tag"></i> <%= product.category.name %>
       </p>
-    <% else %>
-      <p class="card-text text-danger fw-bold"><%= number_to_currency(product.price) %></p>
     <% end %>
     
-    <!-- New product badge -->
-    <% if product.is_new? %>
-      <span class="badge bg-success">New!</span>
-    <% end %>
+    <%# Product description preview %>
+    <p class="card-text flex-grow-1"><%= truncate(product.description, length: 80) %></p>
     
-    <div class="d-flex justify-content-between mt-2">
-      <%= link_to "View Details", product_path(product), class: "btn btn-primary text-white font-weight-bold" %>
+    <%# Product badges %>
+    <div class="mb-2">
+      <% if product.is_new? %>
+        <span class="badge bg-success me-1">New!</span>
+      <% end %>
+      <% if product.on_sale? && product.sale_price.present? %>
+        <span class="badge bg-danger">Sale!</span>
+      <% end %>
+      <% if product.stock_quantity <= 0 %>
+        <span class="badge bg-secondary">Out of Stock</span>
+      <% elsif product.stock_quantity < 5 %>
+        <span class="badge bg-warning text-dark">Low Stock</span>
+      <% end %>
+    </div>
+    
+    <%# Product price %>
+    <div class="mb-3">
+      <% if product.on_sale? && product.sale_price.present? %>
+        <span class="text-decoration-line-through text-muted me-2"><%= number_to_currency(product.price) %></span>
+        <span class="fw-bold text-danger"><%= number_to_currency(product.sale_price) %></span>
+      <% else %>
+        <span class="fw-bold text-primary"><%= number_to_currency(product.price) %></span>
+      <% end %>
+    </div>
+    
+    <%# Quick add to cart and view details buttons %>
+    <div class="d-grid gap-2">
+      <%= link_to "View Details", product_path(product), class: "btn btn-primary" %>
+      <% if product.stock_quantity > 0 %>
+        <%= button_to add_to_cart_path(product), method: :post, class: "btn btn-secondary", 
+            form: { data: { turbo: false } }, params: { product_id: product.id, quantity: 1 } do %>
+          <i class="bi bi-cart-plus"></i> Quick Add
+        <% end %>
+      <% else %>
+        <button class="btn btn-secondary" disabled>
+          <i class="bi bi-cart-plus"></i> Out of Stock
+        </button>
+      <% end %>
     </div>
   </div>
-  
 </div>
