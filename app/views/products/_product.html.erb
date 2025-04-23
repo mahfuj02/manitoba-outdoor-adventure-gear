@@ -1,0 +1,65 @@
+<%# app/views/products/_product.html.erb %>
+<div class="card h-100 product-card shadow-sm border-0">
+  <%# Product image with link %>
+  <%= link_to product_path(product) do %>
+    <% if product.image.attached? %>
+      <%= image_tag product.image, class: "card-img-top p-3", style: "height: 200px; object-fit: contain;", alt: product.name %>
+    <% else %>
+      <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+        <span class="text-muted">No image available</span>
+      </div>
+    <% end %>
+  <% end %>
+
+  <div class="card-body">
+    <%# Product title with link %>
+    <h5 class="card-title">
+      <%= link_to product.name, product_path(product), class: "text-dark" %>
+    </h5>
+    
+    <%# Product badges %>
+    <div class="mb-2">
+      <% if product.is_new? %>
+        <span class="badge bg-success me-1">New!</span>
+      <% end %>
+      <% if product.on_sale? && product.sale_price.present? %>
+        <span class="badge bg-danger">Sale!</span>
+      <% end %>
+      <% if product.stock_quantity <= 0 %>
+        <span class="badge bg-secondary">Out of Stock</span>
+      <% end %>
+    </div>
+    
+    <%# Product price %>
+    <div class="mb-3">
+      <% if product.on_sale? && product.sale_price.present? %>
+        <span class="text-danger fw-bold"><%= number_to_currency(product.sale_price) %></span>
+        <span class="text-decoration-line-through text-muted ms-1"><%= number_to_currency(product.price) %></span>
+      <% else %>
+        <span class="fw-bold"><%= number_to_currency(product.price) %></span>
+      <% end %>
+    </div>
+    
+    <%# Category (if available) %>
+    <% if product.category.present? %>
+      <p class="card-text text-muted small mb-3">
+        <%= product.category.name %>
+      </p>
+    <% end %>
+    
+    <%# Quick add to cart and view details buttons %>
+    <div class="d-grid gap-2 mt-auto">
+      <%= link_to "View Details", product_path(product), class: "btn btn-outline-dark" %>
+      <% if product.stock_quantity > 0 %>
+        <%= button_to add_to_cart_path(product), method: :post, class: "btn btn-dark", 
+            form: { data: { turbo: false } }, params: { product_id: product.id, quantity: 1 } do %>
+          Add to Cart
+        <% end %>
+      <% else %>
+        <button class="btn btn-dark" disabled>
+          Out of Stock
+        </button>
+      <% end %>
+    </div>
+  </div>
+</div>

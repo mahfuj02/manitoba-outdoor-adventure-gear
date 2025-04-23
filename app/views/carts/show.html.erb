@@ -1,0 +1,96 @@
+<!-- app/views/carts/show.html.erb -->
+<div class="container mt-4">
+  <h1>Your Shopping Cart</h1>
+  
+  <% if @cart_items.empty? %>
+    <div class="alert alert-info">
+      Your cart is empty.<br> <br>
+      <a class="btn btn-secondary" href="<%= products_path %>">Continue shopping</a>.
+    </div>
+  <% else %>
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Total</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @cart_items.each do |item| %>
+            <tr>
+              <td>
+                <div class="d-flex">
+                  <% if item[:product].image.attached? %>
+                    <%= image_tag item[:product].image.variant(resize_to_limit: [50, 50]), class: "me-3" %>
+                  <% else %>
+                    <div class="bg-success text-white d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                      <small>No image</small>
+                    </div>
+                  <% end %>
+                  <div>
+                    <h5><%= item[:product].name %></h5>
+                    <% if item[:product].sku.present? %>
+                      <small class="text-muted">SKU: <%= item[:product].sku %></small>
+                    <% end %>
+                  </div>
+                </div>
+              </td>
+              <td><%= number_to_currency(item[:price]) %></td>
+              <td>
+                <%= form_with url: update_cart_item_path(item[:product].id), method: :patch, local: true do %>
+                  <div class="d-flex align-items-center">
+                    <%= number_field_tag :quantity, item[:quantity], min: 1, max: item[:product].stock_quantity, class: "form-control form-control-sm", style: "width: 70px;" %>
+                    <%= submit_tag "Update", class: "btn btn-sm btn-primary ms-2" %>
+                  </div>
+                <% end %>
+              </td>
+              <td><%= number_to_currency(item[:total]) %></td>
+              <td>
+                <%= button_to "Remove", remove_cart_item_path(item[:product].id), method: :delete, class: "btn btn-sm btn-danger" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+        <tfoot>
+          <tr>
+            <th colspan="3" class="text-end">Subtotal:</th>
+            <th><%= number_to_currency(@total) %></th>
+            <th></th>
+          </tr>
+          <tr>
+            <td colspan="3" class="text-end text-muted">
+              <small>Taxes and shipping calculated at checkout</small>
+            </td>
+            <td colspan="2"></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <%= link_to products_path, class: "btn btn-secondary" do %>
+          <i class="bi bi-arrow-left"></i> Continue Shopping
+        <% end %>
+      </div>
+      <div class="col-md-6 text-end">
+        <% if user_signed_in? %>
+          <%= link_to checkout_path, class: "btn btn-success btn-lg" do %>
+            Proceed to Checkout <i class="bi bi-arrow-right"></i>
+          <% end %>
+        <% else %>
+          <%= link_to new_user_session_path, class: "btn btn-primary" do %>
+            Sign in to Checkout
+          <% end %>
+          <small class="d-block mt-2 text-muted">
+            New customer? <%= link_to "Create an account", new_user_registration_path %>
+          </small>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

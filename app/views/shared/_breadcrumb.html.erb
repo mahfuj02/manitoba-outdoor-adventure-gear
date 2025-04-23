@@ -1,0 +1,45 @@
+<%# app/views/shared/_breadcrumb.html.erb %>
+<nav aria-label="breadcrumb">
+  <div class="container">
+    <ol class="breadcrumb py-2 mb-0">
+      <li class="breadcrumb-item"><a href="<%= root_path %>" class="text-secondary small">Home</a></li>
+      
+      <% if controller_name == 'products' && action_name == 'index' %>
+        <% if @category.present? %>
+          <li class="breadcrumb-item"><a href="<%= products_path %>" class="text-secondary small">Products</a></li>
+          <li class="breadcrumb-item active small" aria-current="page"><%= @category.name %></li>
+        <% elsif @filter_name.present? %>
+          <li class="breadcrumb-item"><a href="<%= products_path %>" class="text-secondary small">Products</a></li>
+          <li class="breadcrumb-item active small" aria-current="page"><%= @filter_name %></li>
+        <% elsif @search_term.present? %>
+          <li class="breadcrumb-item"><a href="<%= products_path %>" class="text-secondary small">Products</a></li>
+          <li class="breadcrumb-item active small" aria-current="page">Search: <%= @search_term %></li>
+        <% else %>
+          <li class="breadcrumb-item active small" aria-current="page">Products</li>
+        <% end %>
+      <% elsif controller_name == 'products' && action_name == 'show' %>
+        <li class="breadcrumb-item"><a href="<%= products_path %>" class="text-secondary small">Products</a></li>
+        <% if @product.category.present? %>
+          <li class="breadcrumb-item">
+            <a href="<%= products_path(category_id: @product.category.id) %>" class="text-secondary small"><%= @product.category.name %></a>
+          </li>
+        <% end %>
+        <li class="breadcrumb-item active small" aria-current="page"><%= @product.name %></li>
+      <% elsif controller_name == 'carts' %>
+        <li class="breadcrumb-item active small" aria-current="page">Shopping Cart</li>
+      <% elsif controller_name == 'checkout' %>
+        <li class="breadcrumb-item"><a href="<%= cart_path %>" class="text-secondary small">Shopping Cart</a></li>
+        <li class="breadcrumb-item active small" aria-current="page">Checkout</li>
+      <% elsif controller_name == 'orders' && action_name == 'index' %>
+        <li class="breadcrumb-item active small" aria-current="page">My Orders</li>
+      <% elsif controller_name == 'orders' && action_name == 'show' %>
+        <li class="breadcrumb-item"><a href="<%= orders_path %>" class="text-secondary small">My Orders</a></li>
+        <li class="breadcrumb-item active small" aria-current="page">Order #<%= @order.order_number %></li>
+      <% elsif controller_name == 'about' %>
+        <li class="breadcrumb-item active small" aria-current="page">About Us</li>
+      <% elsif controller_name == 'contact' %>
+        <li class="breadcrumb-item active small" aria-current="page">Contact Us</li>
+      <% end %>
+    </ol>
+  </div>
+</nav>
