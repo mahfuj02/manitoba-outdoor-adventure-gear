@@ -33,17 +33,41 @@
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Montserrat', system-ui, sans-serif;
   }
+
+  /* Disable AA button styles */
+.active_admin {
+  .button, input[type=submit] {
+    all: unset;
+  }
+
+  .product-page input[type=submit], 
+.product-page input[type=button], 
+.product-page form button {
+  background: var(--primary) !important;
+  background-image: none !important;
+  background-color: var(--primary) !important;
+  box-shadow: none !important;
+}
+}
+  body .container input[type="submit"].btn-primary {
+    background-color: var(--primary) !important;
+    border-color: var(--primary) !important;
+    color: white !important;
+  }
   
   .btn-primary {
     background-color: var(--primary);
     border-color: var(--primary);
     color: white !important;
+    background-image: none;
   }
   
   .btn-primary:hover {
-    background-color: var(--neutral-light);
+    background-color: var(--neutral-light) !important;
     color:var(--primary-light) !important;
     border-color: var(--primary);
+    background-image: none!important;
+
   }
   .btn-secondary{
     color: var(--primary) !important;
@@ -51,9 +75,11 @@
     border:1px solid var(--primary);
   }
   .btn.search-btn {
-    color: white !important;
-    background-color: var(--primary) !important;
+    color: var(--primary) !important;
+    background-color: var(--neutral-light) !important;
     border: 1px solid var(--primary);
+    background-image: none!important;
+
   }
   
   .btn-secondary:hover{
